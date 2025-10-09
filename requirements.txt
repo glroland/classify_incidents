@@ -3,3 +3,7 @@ pytest
 requests
 click
 pydantic
+pydantic_settings
+pandas
+openai
+dotenv
