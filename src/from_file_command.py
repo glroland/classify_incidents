@@ -4,6 +4,8 @@ import pandas
 import json
 from pydantic import BaseModel
 from from_string_command import FromStringCommand
+from inference_gateway import InferenceGateway
+from prompts import prompts
 
 logger = logging.getLogger(__name__)
 
@@ -11,10 +13,14 @@ class FromFileCommand(BaseModel):
     """ Command processor for the From File action in the CLI."""
 
     # constants
+    MAX_RETRIES : int = 3
     EXT_CSV : str = ".csv"
+    UNKNOWN_CATEGORY : str = "Unspecified by AI"
     COLUMN_AI_SUMMARY : str = "AI Summary"
     COLUMN_AI_CATEGORY : str = "AI Category"
+    COLUMN_AI_SUBCATEGORY : str = "AI Subcategory"
     COLUMN_AI_IS_CONCLUDED : str = "AI Is Concluded"
+    COLUMN_WAS_LABOR_INTENSIVE : str = "AI Was Labor Intensive"
     COLUMN_AI_STATUS : str = "AI Status"
 
     # input parameters
@@ -71,6 +77,7 @@ class FromFileCommand(BaseModel):
         new_column_summary = []
         new_column_category = []
         new_column_is_concluded = []
+        new_column_was_labor_intensive = []
         new_column_status = []
 
         # process each row
@@ -88,13 +95,18 @@ class FromFileCommand(BaseModel):
             new_column_summary.append(command.summary)
             new_column_category.append(command.category)
             new_column_is_concluded.append(command.is_concluded)
+            new_column_was_labor_intensive.append(command.was_labor_intensive)
             new_column_status.append(command.status)
 
         # append new columns to data frame
         df[self.COLUMN_AI_SUMMARY] = new_column_summary
-        df[self.COLUMN_AI_CATEGORY] = new_column_category
+        df[self.COLUMN_AI_SUBCATEGORY] = new_column_category
         df[self.COLUMN_AI_IS_CONCLUDED] = new_column_is_concluded
+        df[self.COLUMN_WAS_LABOR_INTENSIVE] = new_column_was_labor_intensive
         df[self.COLUMN_AI_STATUS] = new_column_status
+
+        # create category column
+        df = self.generalize_subcategories(df)
 
         # log new data frame content summary
         logger.debug("Head: %s", df.head())
@@ -103,3 +115,45 @@ class FromFileCommand(BaseModel):
         # save the file to disk
         logger.info("Saving new content to disk.  Output Filename=%s", self.output_filename)
         df.to_csv(self.output_filename, index=False, encoding='utf-8')
+
+    def generalize_subcategories(self, df):
+        """ Takes a dataframe with a subcategory column and uses AI to generalize
+            the column list into a shorter list of parent categories.
+            
+            df - data frame with subcategory column
+        """
+        # create array for unique subcategories
+        subcategories = df[self.COLUMN_AI_SUBCATEGORY].unique()
+        subcategories_csv = ','.join(subcategories)
+        logger.debug("Subcategories CSV...   '%s'", subcategories_csv)
+
+        # setup inference gateway
+        gateway = InferenceGateway()
+
+        category_mappings = None
+    
+        # convert subcategories into parent categories
+        retries = 0
+        while retries < self.MAX_RETRIES:
+            try:
+                categories_json_str = gateway.simple_chat(prompts.ROLLUP_SUBCATEGORIES, subcategories_csv)
+                logger.debug("Categories from Subcategories Response == %s", categories_json_str)
+                category_mappings = json.loads(categories_json_str)
+
+                break
+            except Exception as e:
+                logger.warning("An error occurred while trying to create generalized categories list.  Retrying...  Exception=%s", e)
+                retries += 1
+
+        # update dataframe with new category column
+        new_column_category = []
+        for index, row in df.iterrows():
+            subcategory = row[self.COLUMN_AI_SUBCATEGORY]
+            category = category_mappings[subcategory]
+            if category is None:
+                logger.warning("Category is unknown - nothing specified for subcategory:  %s", subcategory)
+                category = self.UNKNOWN_CATEGORY
+            new_column_category.append(category)
+        df[self.COLUMN_AI_CATEGORY] = new_column_category
+
+        return df

@@ -32,10 +32,18 @@ class Prompts(BaseModel):
 
         Review the provided incident data in JSON format and respond with a concise category name that
         briefly describes the type of issue associated with the incident and a one word status describing
-        where the case currently stands based on the data provided.
+        where the case currently stands based on the data provided.  Category name should be the purpose of
+        the incident and not a noun indicating what was impacted.  In the event that insufficent information
+        is provided to derive a categorical reason for the incident, the category must be defined as "Unknown".
+        
+        Your response must be in JSON format where the resulting object has 4 fields: "category", "is_concluded",  
+        "was_labor_intensive", and "status".
 
-        Your response must be in JSON format where the resulting object has 3 fields: "category", "is_concluded", and 
-        "status".
+        Status is your determination of whether or not the incident is actually resolved.  This may or may
+        not align with the incident status.
+
+        "was_labor_intensive" is a flag indicating whether the incident seemed to require more than a few 
+        minutes of manual labor from an engineer in order to resolve.
 
         Here are some examples of a response.
 
@@ -44,6 +52,7 @@ class Prompts(BaseModel):
         {
             category: "Memory Pressure",
             is_concluded: true,
+            was_labor_intensive: false,
             status: "Auto Remediation"
         }
 
@@ -52,6 +61,7 @@ class Prompts(BaseModel):
         {
             category: "New User",
             is_concluded: true,
+            was_labor_intensive: true,
             status: "Complete"
         }
 
@@ -60,7 +70,29 @@ class Prompts(BaseModel):
         {
             category: "Server Down",
             is_concluded: true,
+            was_labor_intensive: true,
             status: "No Response"
+        }
+    """
+
+    ROLLUP_SUBCATEGORIES : str = """
+        You will be provided with a detailed list of subcategory names that are related to ServiceNow
+        incidents.  This list is too specific and needs to be generalized.
+
+        You have discretion in how many items will be in the generalized list but do not include more 
+        than 12 items.
+
+        The list of subcategories will be a comma delimited list.
+
+        You must respond in JSON where the object has a key for each "subcategory" whose value is "category".
+
+        Example:
+        Input: "Memory Pressure", "Compute Pressure", "Server Down"
+        Output:
+        {
+            "Memory Pressure": "System Resources",
+            "Compute Pressure": "System Resources",
+            "Server Down": "Unplanned Outage"
         }
     """
 

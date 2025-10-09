@@ -12,3 +12,7 @@ clean:
 
 run-dir: clean
 	cd src && python classify_incidents.py from-dir ../test-data/ ../target/
+
+run-small: 
+	rm -f ./target/small.csv
+	cd src && python classify_incidents.py from-file ../test-data/small.csv ../target/small.csv

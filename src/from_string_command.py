@@ -20,7 +20,8 @@ class FromStringCommand(BaseModel):
     # output responses
     summary : str = None
     category : str = None
-    is_concluded: bool = None
+    is_concluded : bool = None
+    was_labor_intensive : bool = None
     status : str = None
 
     def go(self):
@@ -50,6 +51,7 @@ class FromStringCommand(BaseModel):
                 analysis = json.loads(step_2_response)
                 self.category = analysis["category"]
                 self.is_concluded = analysis["is_concluded"]
+                self.was_labor_intensive = analysis["was_labor_intensive"]
                 self.status = analysis["status"]
 
                 break
