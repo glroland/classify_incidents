@@ -7,5 +7,8 @@ help:
 	cd src && python classify_incidents.py from-file --help
 	cd src && python classify_incidents.py from-snow --help
 
-run-dir:
-	cd src && python classify_incidents.py from-dir ../test-data/
+clean:
+	rm -rf ./target/
+
+run-dir: clean
+	cd src && python classify_incidents.py from-dir ../test-data/ ./target/

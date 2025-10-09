@@ -10,6 +10,7 @@ class FromDirectoryCommand(BaseModel):
 
     # input parameters
     input_path : str = None
+    output_dir : str = None
 
     def go(self):
         """ Execute the command. """
@@ -34,6 +35,25 @@ class FromDirectoryCommand(BaseModel):
         abs_path = os.path.abspath(self.input_path)
         logger.info("Input Path (Absolute): %s", abs_path)
 
+        # validate output directory
+        logger.debug("Output Directory: %s", self.output_dir)
+        if self.output_dir is None or len(self.output_dir) == 0:
+            msg = "Output Directory is a Required Value and Cannot be Empty!"
+            logger.error(msg)
+            raise ValueError(msg)
+        abs_output_dir = os.path.abspath(self.output_dir)
+        logger.info("Output Directory (Absolute): %s", abs_output_dir)
+        if not os.path.exists(abs_output_dir):
+            logger.info("Output Directory does not exist.  Creating...  Directory=%s", abs_output_dir)
+            os.mkdir(abs_output_dir)
+            logger.debug("Directory created.  Dir=%s", abs_output_dir)
+        else:
+            logger.info("Output Directory already exists.  Directory=%s", abs_output_dir)
+        if not os.path.isdir(abs_output_dir):
+            msg = f"Output Directory exists but is not a directory!  Directory={abs_output_dir}"
+            logger.error(msg)
+            raise ValueError(msg)
+
         # get a list of all files in directory
         file_list = self.get_all_files_in_directory_recursively(abs_path)
         if len(file_list) == 0:
@@ -43,8 +63,15 @@ class FromDirectoryCommand(BaseModel):
         # process each file
         for file in file_list:
             logger.info("Processing file: %s", file)
+
+            # build output filename
+            filename = os.path.basename(file)
+            output_filename = os.path.join(abs_output_dir, filename)
+
+            # execute file processing command
             command = FromFileCommand()
             command.filename_w_path = file
+            command.output_filename = output_filename
             command.go()
 
 

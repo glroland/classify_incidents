@@ -14,21 +14,26 @@ def cli():
 
 @cli.command()
 @click.argument('path')
-def from_dir(path : str):
+@click.argument('output_dir')
+def from_dir(path : str, output_dir : str):
     """ Loads incidents from a directory. """
     click.echo("Classifying Incidents from Root Directory: " + path)
+    click.echo("Publishing Results to: " + output_dir)
     command = FromDirectoryCommand()
     command.input_path = path
+    command.output_dir = output_dir
     command.go()
     click.echo("Successfully Completed!")
 
 @cli.command()
-@click.argument('filename')
-def from_file(filename : str):
+@click.argument('input')
+@click.argument('output')
+def from_file(input : str, output : str):
     """ Loads incidents from a file. """
-    click.echo("Classifying Incidents from file: " + filename)
+    click.echo("Classifying Incidents from file.  Input=" + input + " Output=" + output)
     command = FromFileCommand()
-    command.filename_w_path = filename
+    command.filename_w_path = input
+    command.output_filename = output
     command.go()
     click.echo("Successfully Completed!")
 
