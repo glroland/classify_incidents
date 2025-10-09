@@ -11,11 +11,17 @@ logger = logging.getLogger(__name__)
 class FromStringCommand(BaseModel):
     """ Command processor for the From String action."""
 
+    # configuration
+    MAX_RETRIES : int = 3
+
     # input parameters
     input_str : str = None
 
-    # configuration
-
+    # output responses
+    summary : str = None
+    category : str = None
+    is_concluded: bool = None
+    status : str = None
 
     def go(self):
         """ Execute the command. """
@@ -30,6 +36,24 @@ class FromStringCommand(BaseModel):
         # setup inferencing gateway
         gateway = InferenceGateway()
 
-        # step 1 - analyze input
-        step_1_response = gateway.simple_chat(prompts.STEP_1_ANALYZE, self.input_str)
+        # step 1 - Summarize input
+        step_1_response = gateway.simple_chat(prompts.STEP_1_SUMMARIZE, self.input_str)
         logger.info("Step #1 Response == %s", step_1_response)
+        self.summary = step_1_response
+
+        # step 2 - Analyze summary
+        retries = 0
+        while retries < self.MAX_RETRIES:
+            try:
+                step_2_response = gateway.simple_chat(prompts.STEP_2_ANALYZE, step_1_response)
+                logger.info("Step #2 Response == %s", step_2_response)
+                analysis = json.loads(step_2_response)
+                self.category = analysis["category"]
+                self.is_concluded = analysis["is_concluded"]
+                self.status = analysis["status"]
+
+                break
+            except Exception as e:
+                logger.warning("An error occurred while trying to analyze summary.  Retrying...  Exception=%s", e)
+                retries += 1
+
