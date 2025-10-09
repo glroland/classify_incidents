@@ -11,4 +11,4 @@ clean:
 	rm -rf ./target/
 
 run-dir: clean
-	cd src && python classify_incidents.py from-dir ../test-data/ ./target/
+	cd src && python classify_incidents.py from-dir ../test-data/ ../target/
