@@ -7,6 +7,9 @@ help:
 	cd src && python classify_incidents.py from-file --help
 	cd src && python classify_incidents.py from-snow --help
 
+lint:
+	pylint ./src
+
 clean:
 	rm -rf ./target/
 

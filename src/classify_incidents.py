@@ -4,7 +4,7 @@ from from_dir_command import FromDirectoryCommand
 from from_file_command import FromFileCommand
 from from_snow_command import FromServiceNowCommand
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @click.group()

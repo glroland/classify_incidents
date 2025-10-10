@@ -8,6 +8,9 @@ logger = logging.getLogger(__name__)
 class FromDirectoryCommand(BaseModel):
     """ Command processor for the From Directory action in the CLI."""
 
+    # constants
+    files_to_skip : list[str] = [".DS_Store"]
+
     # input parameters
     input_path : str = None
     output_dir : str = None
@@ -62,17 +65,20 @@ class FromDirectoryCommand(BaseModel):
 
         # process each file
         for file in file_list:
-            logger.info("Processing file: %s", file)
+            if os.path.basename(file) in self.files_to_skip:
+                logger.warning("Skipping file...   Filename=%s", file)
+            else:
+                logger.info("Processing file: %s", file)
 
-            # build output filename
-            filename = os.path.basename(file)
-            output_filename = os.path.join(abs_output_dir, filename)
+                # build output filename
+                filename = os.path.basename(file)
+                output_filename = os.path.join(abs_output_dir, filename)
 
-            # execute file processing command
-            command = FromFileCommand()
-            command.filename_w_path = file
-            command.output_filename = output_filename
-            command.go()
+                # execute file processing command
+                command = FromFileCommand()
+                command.filename_w_path = file
+                command.output_filename = output_filename
+                command.go()
 
 
     def get_all_files_in_directory_recursively(self, path):

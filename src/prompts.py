@@ -84,16 +84,25 @@ class Prompts(BaseModel):
 
         The list of subcategories will be a comma delimited list.
 
-        You must respond in JSON where the object has a key for each "subcategory" whose value is "category".
+        You must respond in JSON in the following form:
+        [
+            {category: "generalized category name", subcategories: [subcategory1, subcategory2, ...]}
+        ]
+        where the object has a key for each "subcategory" whose value is "category".
 
         Example:
         Input: "Memory Pressure", "Compute Pressure", "Server Down"
         Output:
-        {
-            "Memory Pressure": "System Resources",
-            "Compute Pressure": "System Resources",
-            "Server Down": "Unplanned Outage"
-        }
+        [
+            {
+                category: "System Resources",
+                subcategories: ["Memory Pressure", "Compute Pressure"]
+            },
+            {
+                category: "Unplanned Outage",
+                subcategories: ["Server Down"]
+            }
+        ]
     """
 
 prompts = Prompts()

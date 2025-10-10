@@ -13,7 +13,7 @@ class FromFileCommand(BaseModel):
     """ Command processor for the From File action in the CLI."""
 
     # constants
-    MAX_RETRIES : int = 3
+    MAX_RETRIES : int = 5
     EXT_CSV : str = ".csv"
     UNKNOWN_CATEGORY : str = "Unspecified by AI"
     COLUMN_AI_SUMMARY : str = "AI Summary"
@@ -122,9 +122,21 @@ class FromFileCommand(BaseModel):
             
             df - data frame with subcategory column
         """
-        # create array for unique subcategories
+        logger.info("Generalizing Subcategories")
+
+        # handle condition where there are no subcategories
         subcategories = df[self.COLUMN_AI_SUBCATEGORY].unique()
-        subcategories_csv = ','.join(subcategories)
+        if subcategories is None or len(subcategories) == 0:
+            logger.error("No subcategories exist in data frame.  Very unusual.  Research AI output from prior steps.")
+            return
+
+        # create array for unique subcategories
+        subcategories_csv = ""
+        for subcategory in subcategories:
+            if subcategory is not None and len(subcategory) > 0:
+                if len(subcategories_csv) > 0:
+                    subcategories_csv += ","
+                subcategories_csv += subcategory
         logger.debug("Subcategories CSV...   '%s'", subcategories_csv)
 
         # setup inference gateway
@@ -140,16 +152,21 @@ class FromFileCommand(BaseModel):
                 logger.debug("Categories from Subcategories Response == %s", categories_json_str)
                 category_mappings = json.loads(categories_json_str)
 
-                break
+                if category_mappings is not None:
+                    break
             except Exception as e:
                 logger.warning("An error occurred while trying to create generalized categories list.  Retrying...  Exception=%s", e)
                 retries += 1
+        if category_mappings is None:
+            msg = "After several retries, the LLM was unable to produce a parsable list of JSON categories for processing.  Processing is failing..."
+            logger.error(msg)
+            raise ValueError(msg)
 
         # update dataframe with new category column
         new_column_category = []
         for index, row in df.iterrows():
             subcategory = row[self.COLUMN_AI_SUBCATEGORY]
-            category = category_mappings[subcategory]
+            category = self.get_category_for_subcategory(category_mappings, subcategory)
             if category is None:
                 logger.warning("Category is unknown - nothing specified for subcategory:  %s", subcategory)
                 category = self.UNKNOWN_CATEGORY
@@ -157,3 +174,31 @@ class FromFileCommand(BaseModel):
         df[self.COLUMN_AI_CATEGORY] = new_column_category
 
         return df
+
+    def get_category_for_subcategory(self, category_mappings, subcategory):
+        """ Gets the category name for the provided subcategory.
+        
+            category_mappings - category mappings as returned by LLM
+            subcategory - subcategory to find
+        """
+        # handle empty subcategories
+        if subcategory is None or len(subcategory) == 0:
+            logger.warning("Empty subcategory...  Using default.")
+            return None
+
+        # loop through categories
+        for category_group in category_mappings:
+            if category_group is not None and \
+                "category" in category_group and \
+                "subcategories" in category_group:
+                # check for a match
+                category = category_group["category"]
+                for s in category_group["subcategories"]:
+                    if s == subcategory:
+                        return category
+            else:
+                logger.warning("Unexpected category structure.  Category Group=%s", category_group)
+
+        # no match
+        logger.warning("No match found for subcategory.  Subcategory=%s", subcategory)
+        return None
