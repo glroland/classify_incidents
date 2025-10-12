@@ -1,6 +1,7 @@
 """ AI Prompts for analyzing instancts. """
 import os
 import logging
+import requests
 from utils.settings import settings
 
 logger = logging.getLogger(__name__)
@@ -48,14 +49,32 @@ class Prompts:
             logger.error(msg)
             raise ValueError(msg)
 
+        prompt_contents = None
+
         # load from network
         if str(prompts_location).lower().startswith(self.HTTP):
-            msg = "Remote loading of prompts is not yet implemented!"
-            logger.error(msg)
-            raise NotImplementedError(msg)
+            logger.debug("Loading Prompt from URL: %s", prompts_location)
+
+            # build URL
+            url = str(prompts_location)
+            if url[-1] != "/":
+                url += "/"
+            url += filename
+            logger.debug("Prompt File URL: %s", url)
+
+            # request file
+            http_response = requests.get(url)
+            if http_response.status_code != 200:
+                msg = f"Unable to retrieve prompt from URL.  Code={url}"
+                logger.error(msg)
+                raise ValueError(msg)
+
+            prompt_contents = http_response.text
 
         # load from disk
         else:
+            logger.debug("Loading Prompt from Disk: %s", filename)
+
             # build filename
             path = os.path.join(prompts_location, filename)
             abs_path = os.path.abspath(path)
@@ -63,6 +82,9 @@ class Prompts:
 
             # load file
             with open(abs_path, "r", encoding=self.ENCODING) as file:
-                return file.read()
+                prompt_contents = file.read()
+
+        logger.debug("Prompt for %s: %s", filename, prompt_contents)
+        return prompt_contents
 
 prompts = Prompts()
