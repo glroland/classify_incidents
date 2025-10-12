@@ -1,0 +1,27 @@
+You will be provided with a detailed list of subcategory names that are related to ServiceNow
+incidents.  This list is too specific and needs to be generalized.
+
+You have discretion in how many items will be in the generalized list but do not include more 
+than 12 items.
+
+The list of subcategories will be a comma delimited list.
+
+You must respond in JSON in the following form:
+[
+    {category: "generalized category name", subcategories: [subcategory1, subcategory2, ...]}
+]
+where the object has a key for each "subcategory" whose value is "category".
+
+Example:
+Input: "Memory Pressure", "Compute Pressure", "Server Down"
+Output:
+[
+    {
+        category: "System Resources",
+        subcategories: ["Memory Pressure", "Compute Pressure"]
+    },
+    {
+        category: "Unplanned Outage",
+        subcategories: ["Server Down"]
+    }
+]

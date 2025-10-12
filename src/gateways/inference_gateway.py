@@ -1,7 +1,7 @@
 """ Service Gateway for the Inferencing API. """
 import logging
 from openai import OpenAI
-from settings import settings
+from utils.settings import settings
 
 logger = logging.getLogger(__name__)
 

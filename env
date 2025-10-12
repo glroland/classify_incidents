@@ -1,3 +1,10 @@
 OPENAI_BASE_URL = http://localhost:11434/v1
 OPENAI_API_KEY = not_provided
 OPENAI_MODEL = granite4
+
+SERVICE_NOW_INSTANCE = abc
+SERVICE_NOW_USERNAME = username
+SERVICE_NOW_PASSWORD = password
+SERVICE_NOW_TIMEOUT = 60
+
+

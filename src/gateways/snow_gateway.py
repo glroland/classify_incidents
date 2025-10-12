@@ -3,7 +3,7 @@ import logging
 from urllib.parse import urlencode
 import base64
 import requests
-from settings import settings
+from utils.settings import settings
 
 logger = logging.getLogger(__name__)
 

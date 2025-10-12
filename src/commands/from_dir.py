@@ -2,7 +2,7 @@
 import os
 import logging
 from pydantic import BaseModel
-from from_file_command import FromFileCommand
+from commands.from_file import FromFileCommand
 
 logger = logging.getLogger(__name__)
 

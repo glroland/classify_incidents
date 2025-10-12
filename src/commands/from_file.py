@@ -4,9 +4,9 @@ import logging
 import json
 import pandas
 from pydantic import BaseModel
-from from_string_command import FromStringCommand
-from inference_gateway import InferenceGateway
-from prompts import prompts
+from commands.from_string import FromStringCommand
+from gateways.inference_gateway import InferenceGateway
+from utils.get_prompt import prompts
 
 logger = logging.getLogger(__name__)
 

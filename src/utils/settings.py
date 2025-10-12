@@ -67,4 +67,13 @@ class Settings(BaseSettings):
         },
     )
 
+    # prompt source location
+    PROMPTS_LOCATION: str = Field(
+        default="./prompts/",
+        json_schema_extra={
+            "env": "PROMPTS_LOCATION",
+            "description": "Location where prompts are stored",
+        },
+    )
+
 settings = Settings()

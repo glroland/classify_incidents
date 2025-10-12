@@ -1,7 +1,7 @@
 """ CLI Command for Analyzing Incidents directly from Service Now. """
 import logging
 from pydantic import BaseModel
-from snow_gateway import ServiceNowGateway
+from gateways.snow_gateway import ServiceNowGateway
 
 logger = logging.getLogger(__name__)
 

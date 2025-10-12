@@ -2,8 +2,8 @@
 import logging
 import json
 from pydantic import BaseModel
-from inference_gateway import InferenceGateway
-from prompts import prompts
+from gateways.inference_gateway import InferenceGateway
+from utils.get_prompt import prompts
 
 logger = logging.getLogger(__name__)
 

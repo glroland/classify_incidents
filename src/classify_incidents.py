@@ -1,9 +1,9 @@
 """ CLI entry point for Incident Analysis Application. """
 import logging
 import click
-from from_dir_command import FromDirectoryCommand
-from from_file_command import FromFileCommand
-from from_snow_command import FromServiceNowCommand
+from commands.from_dir import FromDirectoryCommand
+from commands.from_file import FromFileCommand
+from commands.from_snow import FromServiceNowCommand
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
