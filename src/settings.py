@@ -1,4 +1,4 @@
-import os
+""" Configuration Management for application. """
 from dotenv import load_dotenv
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings
 # Load environment variables
 try:
     load_dotenv()
-except Exception:
+except Exception:   # pylint: disable=broad-except
     # Ignore errors for when standard environment variables are being set
     pass
 
@@ -34,6 +34,36 @@ class Settings(BaseSettings):
         json_schema_extra={
             "env": "OPENAI_MODEL",
             "description": "OpenAI Model Name",
+        },
+    )
+
+    # ServiceNow Configuration
+    SERVICE_NOW_INSTANCE: str = Field(
+        default=None,
+        json_schema_extra={
+            "env": "SERVICE_NOW_INSTANCE",
+            "description": "Service Now Instance ID",
+        },
+    )
+    SERVICE_NOW_USERNAME: str = Field(
+        default=None,
+        json_schema_extra={
+            "env": "SERVICE_NOW_USERNAME",
+            "description": "Service Now Username",
+        },
+    )
+    SERVICE_NOW_PASSWORD: str = Field(
+        default=None,
+        json_schema_extra={
+            "env": "SERVICE_NOW_PASSWORD",
+            "description": "Service Now Password",
+        },
+    )
+    SERVICE_NOW_TIMEOUT: str = Field(
+        default=60,
+        json_schema_extra={
+            "env": "SERVICE_NOW_TIMEOUT",
+            "description": "Service Now Request Timeout",
         },
     )
 

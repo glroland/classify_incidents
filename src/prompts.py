@@ -1,6 +1,8 @@
+""" AI Prompts for analyzing instancts. """
 from pydantic import BaseModel
 
 class Prompts(BaseModel):
+    """ List of prompts used througout application. """
 
     STEP_1_SUMMARIZE : str = """
         You are a deeply technical IT support specialist who is an expert in analyzing complex

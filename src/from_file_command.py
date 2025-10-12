@@ -1,7 +1,8 @@
+""" CLI Command for Analyzing Instances from a single file. """
 import os
 import logging
-import pandas
 import json
+import pandas
 from pydantic import BaseModel
 from from_string_command import FromStringCommand
 from inference_gateway import InferenceGateway
@@ -27,6 +28,7 @@ class FromFileCommand(BaseModel):
     filename_w_path : str = None
     output_filename : str = None
 
+   # pylint: disable=too-many-statements
     def go(self):
         """ Execute the command. """
 
@@ -64,7 +66,7 @@ class FromFileCommand(BaseModel):
 
         # ensure file is a CSV
         if not abs_filename.lower().endswith(self.EXT_CSV):
-            msg = f"Input File is not a CSV file.  Unable to process at this time.  Filename={abs_filename}"
+            msg = f"Input File is not a CSV file and cannot process. Filename={abs_filename}"
             logger.error(msg)
             raise ValueError(msg)
 
@@ -127,8 +129,8 @@ class FromFileCommand(BaseModel):
         # handle condition where there are no subcategories
         subcategories = df[self.COLUMN_AI_SUBCATEGORY].unique()
         if subcategories is None or len(subcategories) == 0:
-            logger.error("No subcategories exist in data frame.  Very unusual.  Research AI output from prior steps.")
-            return
+            logger.error("No subcategories exist in data frame suggesting invalid AI output.")
+            return df
 
         # create array for unique subcategories
         subcategories_csv = ""
@@ -143,32 +145,34 @@ class FromFileCommand(BaseModel):
         gateway = InferenceGateway()
 
         category_mappings = None
-    
+
         # convert subcategories into parent categories
         retries = 0
         while retries < self.MAX_RETRIES:
             try:
-                categories_json_str = gateway.simple_chat(prompts.ROLLUP_SUBCATEGORIES, subcategories_csv)
+                categories_json_str = gateway.simple_chat(prompts.ROLLUP_SUBCATEGORIES,
+                                                          subcategories_csv)
                 logger.debug("Categories from Subcategories Response == %s", categories_json_str)
                 category_mappings = json.loads(categories_json_str)
 
                 if category_mappings is not None:
                     break
-            except Exception as e:
-                logger.warning("An error occurred while trying to create generalized categories list.  Retrying...  Exception=%s", e)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                logger.warning("An error occurred while trying to create generalized categories list.  Retrying...  Exception=%s", e)   # pylint: disable=line-too-long
                 retries += 1
         if category_mappings is None:
-            msg = "After several retries, the LLM was unable to produce a parsable list of JSON categories for processing.  Processing is failing..."
+            msg = "After several retries, the LLM was unable to produce a parsable list of JSON categories for processing.  Processing is failing..."   # pylint: disable=line-too-long
             logger.error(msg)
             raise ValueError(msg)
 
         # update dataframe with new category column
         new_column_category = []
-        for index, row in df.iterrows():
+        for index, row in df.iterrows():        # pylint: disable=unused-variable
             subcategory = row[self.COLUMN_AI_SUBCATEGORY]
             category = self.get_category_for_subcategory(category_mappings, subcategory)
             if category is None:
-                logger.warning("Category is unknown - nothing specified for subcategory:  %s", subcategory)
+                logger.warning("Category is unknown - nothing specified for subcategory:  %s",
+                               subcategory)
                 category = self.UNKNOWN_CATEGORY
             new_column_category.append(category)
         df[self.COLUMN_AI_CATEGORY] = new_column_category

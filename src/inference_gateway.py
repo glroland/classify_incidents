@@ -1,10 +1,11 @@
-import os
+""" Service Gateway for the Inferencing API. """
 import logging
 from openai import OpenAI
 from settings import settings
 
 logger = logging.getLogger(__name__)
 
+# pylint: disable=too-few-public-methods
 class InferenceGateway():
     """ OpenAI Service Gateway """
 

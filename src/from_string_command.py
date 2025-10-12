@@ -1,6 +1,5 @@
-import os
+""" Command for Analyzing Instances via raw text. """
 import logging
-import pandas
 import json
 from pydantic import BaseModel
 from inference_gateway import InferenceGateway
@@ -55,7 +54,6 @@ class FromStringCommand(BaseModel):
                 self.status = analysis["status"]
 
                 break
-            except Exception as e:
-                logger.warning("An error occurred while trying to analyze summary.  Retrying...  Exception=%s", e)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                logger.warning("Retrying after error raised while trying to analyze summary.  E=%s", e) # pylint: disable=line-too-long
                 retries += 1
-

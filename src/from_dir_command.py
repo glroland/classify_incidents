@@ -1,3 +1,4 @@
+""" CLI Command for Importing Incidents from Directory. """
 import os
 import logging
 from pydantic import BaseModel
@@ -47,7 +48,8 @@ class FromDirectoryCommand(BaseModel):
         abs_output_dir = os.path.abspath(self.output_dir)
         logger.info("Output Directory (Absolute): %s", abs_output_dir)
         if not os.path.exists(abs_output_dir):
-            logger.info("Output Directory does not exist.  Creating...  Directory=%s", abs_output_dir)
+            logger.info("Output Directory does not exist.  Creating...  Directory=%s", \
+                        abs_output_dir)
             os.mkdir(abs_output_dir)
             logger.debug("Directory created.  Dir=%s", abs_output_dir)
         else:
