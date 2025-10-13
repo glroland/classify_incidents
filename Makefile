@@ -13,6 +13,9 @@ lint:
 clean:
 	rm -rf ./target/
 
+run-web:
+	cd src && streamlit run web.py --server.port=8080 --server.address=0.0.0.0
+
 run-dir: clean
 	cd src && python cli.py from-dir ../test-data/ ../target/
 
