@@ -59,11 +59,13 @@ class Settings(BaseSettings):
             "description": "Service Now Password",
         },
     )
-    SERVICE_NOW_TIMEOUT: str = Field(
+
+    # API Timeout
+    API_TIMEOUT: str = Field(
         default=60,
         json_schema_extra={
-            "env": "SERVICE_NOW_TIMEOUT",
-            "description": "Service Now Request Timeout",
+            "env": "API_TIMEOUT",
+            "description": "REST API Request Timeout",
         },
     )
 
@@ -73,6 +75,36 @@ class Settings(BaseSettings):
         json_schema_extra={
             "env": "PROMPTS_LOCATION",
             "description": "Location where prompts are stored",
+        },
+    )
+
+    # object storage connection info
+    OBJECT_STORAGE_URL: str = Field(
+        default=None,
+        json_schema_extra={
+            "env": "OBJECT_STORAGE_URL",
+            "description": "Object Storage URL",
+        },
+    )
+    OBJECT_STORAGE_ACCESS_KEY: str = Field(
+        default=None,
+        json_schema_extra={
+            "env": "OBJECT_STORAGE_ACCESS_KEY",
+            "description": "Object Storage Access Key",
+        },
+    )
+    OBJECT_STORAGE_SECRET_KEY: str = Field(
+        default=None,
+        json_schema_extra={
+            "env": "OBJECT_STORAGE_SECRET_KEY",
+            "description": "Object Storage Secret Key",
+        },
+    )
+    OBJECT_STORAGE_BUCKET: str = Field(
+        default=None,
+        json_schema_extra={
+            "env": "OBJECT_STORAGE_BUCKET",
+            "description": "Object Storage Bucket (i.e. Working Directory)",
         },
     )
 

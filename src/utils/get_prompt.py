@@ -63,7 +63,7 @@ class Prompts:
             logger.debug("Prompt File URL: %s", url)
 
             # request file
-            http_response = requests.get(url)
+            http_response = requests.get(url, timeout=settings.API_TIMEOUT)
             if http_response.status_code != 200:
                 msg = f"Unable to retrieve prompt from URL.  Code={url}"
                 logger.error(msg)

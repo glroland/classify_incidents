@@ -41,7 +41,7 @@ class ServiceNowGateway():
         # invoke snow api
         url = self.get_snow_url(self.ServiceNowActions.SNOW_INCIDENT_TABLE, parameters)
         headers = self.build_snow_headers()
-        http_response = requests.get(url, headers=headers, timeout=settings.SERVICE_NOW_TIMEOUT)
+        http_response = requests.get(url, headers=headers, timeout=settings.API_TIMEOUT)
         if http_response.status_code != 200:
             msg = f"Unable to invoke SNOW API.  HTTP Response Code = {http_response.status_code}"
             logger.error(msg)
