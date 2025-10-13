@@ -39,21 +39,21 @@ class Settings(BaseSettings):
 
     # ServiceNow Configuration
     SERVICE_NOW_INSTANCE: str = Field(
-        default=None,
+        default="",
         json_schema_extra={
             "env": "SERVICE_NOW_INSTANCE",
             "description": "Service Now Instance ID",
         },
     )
     SERVICE_NOW_USERNAME: str = Field(
-        default=None,
+        default="",
         json_schema_extra={
             "env": "SERVICE_NOW_USERNAME",
             "description": "Service Now Username",
         },
     )
     SERVICE_NOW_PASSWORD: str = Field(
-        default=None,
+        default="",
         json_schema_extra={
             "env": "SERVICE_NOW_PASSWORD",
             "description": "Service Now Password",
@@ -61,7 +61,7 @@ class Settings(BaseSettings):
     )
 
     # API Timeout
-    API_TIMEOUT: str = Field(
+    API_TIMEOUT: int = Field(
         default=60,
         json_schema_extra={
             "env": "API_TIMEOUT",
@@ -80,28 +80,28 @@ class Settings(BaseSettings):
 
     # object storage connection info
     OBJECT_STORAGE_URL: str = Field(
-        default=None,
+        default="",
         json_schema_extra={
             "env": "OBJECT_STORAGE_URL",
             "description": "Object Storage URL",
         },
     )
     OBJECT_STORAGE_ACCESS_KEY: str = Field(
-        default=None,
+        default="",
         json_schema_extra={
             "env": "OBJECT_STORAGE_ACCESS_KEY",
             "description": "Object Storage Access Key",
         },
     )
     OBJECT_STORAGE_SECRET_KEY: str = Field(
-        default=None,
+        default="",
         json_schema_extra={
             "env": "OBJECT_STORAGE_SECRET_KEY",
             "description": "Object Storage Secret Key",
         },
     )
     OBJECT_STORAGE_BUCKET: str = Field(
-        default=None,
+        default="",
         json_schema_extra={
             "env": "OBJECT_STORAGE_BUCKET",
             "description": "Object Storage Bucket (i.e. Working Directory)",
