@@ -36,7 +36,7 @@ def sidebar():
         st.query_params.action = actions.CREATE_DATA_SET
 
     # Data set header
-    st.header("Data Sets")
+    st.header("Prior Evaluations")
 
     # Display available data sets for selection
     dataset_list = get_data_sets()
