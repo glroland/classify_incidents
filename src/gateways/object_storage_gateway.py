@@ -19,7 +19,7 @@ class ObjectStorageGateway():
             aws_access_key_id = settings.OBJECT_STORAGE_ACCESS_KEY,
             aws_secret_access_key = settings.OBJECT_STORAGE_SECRET_KEY,
             endpoint_url = settings.OBJECT_STORAGE_URL,
-            verify = False,
+            #verify = False,
             config = boto3.session.Config(signature_version='s3v4')   # For MinIO compatibility
         )
         self.bucket_name = settings.OBJECT_STORAGE_BUCKET

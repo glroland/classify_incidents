@@ -5,7 +5,8 @@ class WebsiteActions():
 
     # Action Key Values
     HOME = "home"
-    CREATE_DATA_SET = "create"
-    VIEW_DATA_SET = "view"
+    CREATE_EVALUATION = "create"
+    IMPORT_DATA_SET = "import"
+    VIEW_EVALUATION = "view"
 
 actions = WebsiteActions()
