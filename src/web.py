@@ -12,8 +12,8 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 st.set_page_config(
-    page_title="Streamline Operations",
-    page_icon=":chart_with_downwards_trend:",
+    page_title="Streamline Operations with AI Automation",
+    page_icon=":chart_with_upwards_trend:",
     layout="wide"
 )
 
