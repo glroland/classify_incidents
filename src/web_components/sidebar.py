@@ -32,8 +32,8 @@ def sidebar():
     )
 
     # Create new data set button
-    if st.button("Import New Data Set", type="primary", width="stretch"):
-        st.query_params.action = actions.CREATE_DATA_SET
+    if st.button("Create New...", type="primary", width="stretch"):
+        st.query_params.action = actions.CREATE_EVALUATION
 
     # Data set header
     st.header("Prior Evaluations")
@@ -48,4 +48,4 @@ def sidebar():
             index += 1
             if st.button(f"{index}.) {dataset}", type="tertiary"):
                 st.query_params.dataset = dataset
-                st.query_params.action = actions.VIEW_DATA_SET
+                st.query_params.action = actions.VIEW_EVALUATION

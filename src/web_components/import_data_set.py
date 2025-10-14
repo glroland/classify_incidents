@@ -1,4 +1,4 @@
-""" Create Data Set Content Component """
+""" Import Data Set Content Component """
 from datetime import date, timedelta
 import streamlit as st
 
@@ -41,7 +41,7 @@ def import_file():
     # submit button
     st.button("Upload", type="primary")
 
-def create_data_set():
+def import_data_set():
     st.header("Import New Data Set")
 
     # display upload process selection radio button
