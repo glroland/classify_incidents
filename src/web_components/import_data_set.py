@@ -1,8 +1,10 @@
 """ Import Data Set Content Component """
 from datetime import date, timedelta
+from io import StringIO
 import streamlit as st
+from gateways.object_storage_gateway import ObjectStorageGateway
 
-def import_from_snow():
+def import_from_snow(space_id):
     """ Display form to import data from Service Now """
     col1, col2 = st.columns([0.275, 0.735])
 
@@ -33,15 +35,32 @@ def import_from_snow():
     # submit button
     st.button("Download from Service Now", type="primary")
 
-def import_file():
+def import_file(space_id):
     """ Display form to import data from csv file. """
     # upload file
     csv_file = st.file_uploader("Choose CSV files to upload.")
 
     # submit button
-    st.button("Upload", type="primary")
+    if st.button("Upload", type="primary"):
+        if csv_file is not None:
+            # receiving file status
+            st.write(f"Receiving file upload...  {csv_file.name}")
 
-def import_data_set():
+            # retrieve data from file
+            stringio = StringIO(csv_file.getvalue().decode("utf-8"))
+            csv_file_contents = stringio.read()
+
+            # file received status
+            st.write("File received!  Uploading to space...")
+
+            # upload file
+            gateway = ObjectStorageGateway()
+            path = f"{space_id}/raw/{csv_file.name}"
+            gateway.upload(path, csv_file_contents)
+
+            st.success("File Saved in Space!")
+
+def import_data_set(space_id):
     st.header("Import New Data Set")
 
     # display upload process selection radio button
@@ -59,6 +78,6 @@ def import_data_set():
 
     # display appropriate web form
     if data_set_source_radio == snow_option:
-        import_from_snow()
+        import_from_snow(space_id)
     elif data_set_source_radio == file_option:
-        import_file()
+        import_file(space_id)

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from pydantic import BaseModel
 from metadata.evaluation_space import EvaluationSpaceMetadata
+from metadata.data_file import DataFile
 from gateways.object_storage_gateway import ObjectStorageGateway
 
 logger = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ class LoadSpacesCommand(BaseModel):
 
     # output responses
     metadata : EvaluationSpaceMetadata = None
+    raw_data_files : list[DataFile] = []
 
     def go(self):
         """ Execute the command. """
@@ -32,25 +34,21 @@ class LoadSpacesCommand(BaseModel):
         metadata_str = gateway.download(path) 
         self.metadata = EvaluationSpaceMetadata.model_validate_json(metadata_str)
 
-"""
-        # create the evaluation space list
+        # populate file lists associated with space
         all_files = gateway.list()
         for file in all_files:
             # break the file into parts
             path_object = Path(file)
             parts = path_object.parts
 
-            # find metdata files
-            if parts is not None and len(parts) == 2:
-                if parts[1] == "metadata.json":
-                    # load metadata
-                    contents = gateway.download(file)
-                    if contents is None or len(contents) == 0:
-                        msg = f"Contents of metadata.json is empty!  Filename={file}"
-                        logger.error(msg)
-                        raise ValueError(msg)
+            # find space
+            if parts is not None and len(parts) > 0 and parts[0] == self.space_id:
+                if len(parts) >= 3:
 
-                    # convert contents to strongly typed object
-                    metadata = EvaluationSpaceMetadata.model_validate_json(contents)
-                    self.spaces.append(metadata)
-"""
+                    # create data file object
+                    if parts[1] == "raw":
+                        data_file = DataFile()
+                        data_file.filename = parts[2]
+                        data_file.full_path = file
+                        data_file.parts = parts
+                        self.raw_data_files.append(data_file)

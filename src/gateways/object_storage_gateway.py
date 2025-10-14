@@ -1,5 +1,6 @@
 """ Service Gateway for accessing S3/Object Storage. """
 import logging
+from pathlib import Path
 import boto3
 from utils.settings import settings
 
@@ -82,3 +83,42 @@ class ObjectStorageGateway():
 
         logger.debug("File contents.  Key=%s Contents=%s", key, contents)
         return contents
+
+    def delete(self, key : str):
+        """ Deletes the specified file from the bucket.
+        
+            key - name of file to delete
+        """
+        # validate input parameters
+        if key is None or len(key) == 0:
+            msg = "Key is required but is empty!"
+            logger.error(msg)
+            raise ValueError(msg)
+
+        # download the file
+        logger.info("Deleting file from bucket.  Key=%s", key)
+        self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
+
+    def delete_root_dir(self, root_dir : str):
+        """ Deletes all files in/under the root directory from the bucket.
+        
+            root_dir - root directory
+        """
+        # validate input parameters
+        if root_dir is None or len(root_dir) == 0:
+            msg = "root_dir is required but is empty!"
+            logger.error(msg)
+            raise ValueError(msg)
+
+        # list files
+        all_files = self.list()
+        for file in all_files:
+            # parse path
+            path_object = Path(file)
+            parts = path_object.parts
+
+            # check for match
+            if parts is not None and len(parts) > 1:
+                if parts[0] == root_dir:
+                    logger.warning("Deleting file: %s", file)
+                    self.delete(file)

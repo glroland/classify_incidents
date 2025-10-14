@@ -2,6 +2,7 @@
 from datetime import datetime
 import streamlit as st
 from commands.create_space import CreateSpaceCommand
+from web_components.actions import actions
 
 def create_new():
     st.header("Create New Evaluation")
@@ -28,3 +29,8 @@ def create_new():
             command.go()
 
             st.success("Evaluation space created!")
+
+            # redirect to view the space that was just created
+            st.query_params.space_id = command.id
+            st.query_params.subaction = actions.view_subactions.HOME
+            st.query_params.action = actions.VIEW_EVALUATION

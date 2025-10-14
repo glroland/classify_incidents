@@ -1,18 +1,13 @@
 """ View Data Set Content Component """
 import logging
 import streamlit as st
+import pandas as pd
 from commands.load_space import LoadSpacesCommand
 from web_components.actions import actions
 from web_components.import_data_set import import_data_set
+from gateways.object_storage_gateway import ObjectStorageGateway
 
 logger = logging.getLogger(__name__)
-
-def delete_evaluation(space_id):
-    """ Delete the specified evaluation. 
-    
-        space_id - uuid of evaluation to delete
-    """
-    st.success("Deleted evaluation")
 
 def import_incidents(space_id):
     """ Imports data.
@@ -35,10 +30,13 @@ def view_evaluation():
     command.space_id = space_id
     command.go()
     metadata = command.metadata
+    raw_data_files = command.raw_data_files
 
     # page header
     st.title(f"Evaluation '{metadata.name}'")
     st.write(metadata.description)
+
+    gateway = ObjectStorageGateway()
 
     # actions list
     col1, col2, col3, col4 = st.columns([0.25, 0.25, 0.25, 0.25])
@@ -55,13 +53,16 @@ def view_evaluation():
             st.query_params.space_id = metadata.id
             st.query_params.subaction = actions.view_subactions.IMPORT
             st.query_params.action = actions.VIEW_EVALUATION
+            st.rerun()
     with col4:
         if st.button("Delete Evaluation", type="primary"):
-            delete_evaluation(space_id)
+            gateway.delete_root_dir(space_id)
+            st.query_params.action = actions.HOME
+            st.rerun()
 
     # render rest of page
     if "subaction" in st.query_params and st.query_params.subaction == actions.view_subactions.IMPORT:
-        import_data_set()
+        import_data_set(space_id)
     else:
         # default content
         summary_tab, drill_down_tab, raw_data_tab, automation_tab = st.tabs( \
@@ -73,6 +74,56 @@ def view_evaluation():
         with drill_down_tab:
             st.header("Drill Down into Findings")
         with raw_data_tab:
-            st.header("View Previously Uploaded Incident Data Sets")
+            st.header("View Uploaded Incident Data Sets")
+            if len(raw_data_files) == 0:
+                st.write("No files...")
+            else:
+                filenames = []
+                paths = []
+                selected = []
+                for data_file in raw_data_files:
+                    filenames.append(data_file.filename)
+                    paths.append(data_file.full_path)
+                    selected.append(False)
+                raw_file_list = {
+                    "Filename": filenames,
+                    "Full Path": paths,
+                    "Selected": selected,
+                }
+                df = pd.DataFrame(raw_file_list)
+
+                # Display the editable table with checkboxes
+                edited_df = st.data_editor(
+                    df,
+                    column_config={
+                        "Selected": st.column_config.CheckboxColumn(
+                            "Select Items",
+                            help="Select items to view or delete",
+                            default=False,
+                        )
+                    },
+                    hide_index=True
+                )
+                selected_items = edited_df[edited_df['Selected']]
+                no_items_selected = len(selected_items) == 0
+                one_item_not_selected = len(selected_items) != 1
+
+                col1, col2 = st.columns([0.2, 0.8])
+
+                # View Button
+                with col1:
+                    if st.button("View File", type="secondary", disabled=one_item_not_selected):
+                        for index, row in selected_items.iterrows():
+                            pass
+
+                # Delete Button
+                with col2:
+                    if st.button("Delete Files", type="secondary", disabled=no_items_selected):
+                        for index, row in selected_items.iterrows():
+                            st.write(f"Deleting file: {row["Full Path"]}")
+                            gateway.delete(row["Full Path"])
+                            st.write("File deleted...")
+                        st.success("Files deleted!  Please refresh page.")
+
         with automation_tab:
             st.header("Recommended Automation")
