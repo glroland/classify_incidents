@@ -64,4 +64,15 @@ def view_evaluation():
         import_data_set()
     else:
         # default content
-        st.write("Default Content")
+        summary_tab, drill_down_tab, raw_data_tab, automation_tab = st.tabs( \
+            ["Summary", "Drill Down", "Raw Data", "Automation"], \
+                width="stretch", default=None)
+
+        with summary_tab:
+            st.header("Summary")
+        with drill_down_tab:
+            st.header("Drill Down into Findings")
+        with raw_data_tab:
+            st.header("View Previously Uploaded Incident Data Sets")
+        with automation_tab:
+            st.header("Recommended Automation")
