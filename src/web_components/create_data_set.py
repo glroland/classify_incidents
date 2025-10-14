@@ -38,6 +38,9 @@ def import_file():
     # data set name
     data_set_input = st.text_input("Short description of data set:", "", max_chars=25, width=400)
 
+    # upload file
+    csv_file = st.file_uploader("Choose a CSV file to upload.")
+
     # submit button
     st.button("Upload", type="primary")
 
