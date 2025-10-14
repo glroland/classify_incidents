@@ -1,15 +1,16 @@
 """ Sidebar Web Component """
 import streamlit as st
+from commands.get_spaces import GetSpacesCommand
 from gateways.object_storage_gateway import ObjectStorageGateway
 from web_components.actions import actions
 
-def get_data_sets():
-    """ Pulls a list of datasets from Object Storage. """
+def get_spaces():
+    """ Pulls a list of spaces from Object Storage. """
     # pull list of objects from storage
-    gateway = ObjectStorageGateway()
-    list_of_files = gateway.list()
+    command = GetSpacesCommand()
+    command.go()
 
-    return list_of_files
+    return command.spaces
 
 def sidebar():
     """ Dynamically render sidebar. """
@@ -39,13 +40,13 @@ def sidebar():
     st.header("Prior Evaluations")
 
     # Display available data sets for selection
-    dataset_list = get_data_sets()
-    if dataset_list is None or len(dataset_list) == 0:
+    spaces = get_spaces()
+    if spaces is None or len(spaces) == 0:
         st.write("Empty")
     else:
         index = 0
-        for dataset in dataset_list:
+        for space in spaces:
             index += 1
-            if st.button(f"{index}.) {dataset}", type="tertiary"):
-                st.query_params.dataset = dataset
+            if st.button(f"{space.name}", type="tertiary", width="stretch"):
+                st.query_params.space_id = space.id
                 st.query_params.action = actions.VIEW_EVALUATION
