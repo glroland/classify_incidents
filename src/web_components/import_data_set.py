@@ -35,11 +35,8 @@ def import_from_snow():
 
 def import_file():
     """ Display form to import data from csv file. """
-    # data set name
-    data_set_input = st.text_input("Short description of data set:", "", max_chars=25, width=400)
-
     # upload file
-    csv_file = st.file_uploader("Choose a CSV file to upload.")
+    csv_file = st.file_uploader("Choose CSV files to upload.")
 
     # submit button
     st.button("Upload", type="primary")

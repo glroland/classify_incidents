@@ -26,8 +26,6 @@ if not "action" in st.query_params or st.query_params["action"] == actions.HOME:
     home()
 elif st.query_params["action"] == actions.CREATE_EVALUATION:
     create_new()
-elif st.query_params["action"] == actions.IMPORT_DATA_SET:
-    import_data_set()
 elif st.query_params["action"] == actions.VIEW_EVALUATION:
     view_evaluation()
 else:

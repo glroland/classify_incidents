@@ -6,7 +6,14 @@ class WebsiteActions():
     # Action Key Values
     HOME = "home"
     CREATE_EVALUATION = "create"
-    IMPORT_DATA_SET = "import"
     VIEW_EVALUATION = "view"
+
+    class ViewPageSubactions():
+        """ List of view page actions """
+
+        HOME = "home"
+        IMPORT = "import"
+
+    view_subactions = ViewPageSubactions()
 
 actions = WebsiteActions()
