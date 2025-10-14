@@ -25,9 +25,11 @@ def sidebar():
                 unsafe_allow_html=True
             )
 
-    # Create new data set button
-    if st.button("Home", type="primary", width="stretch"):
-        st.query_params.clear()
+    # display title logo
+    st.markdown(
+        '<a href="." target="_self"><img src="/app/static/title.png" alt="HTML image" style="max-width: 100%;"></a>',
+        unsafe_allow_html=True
+    )
 
     # Create new data set button
     if st.button("Import New Data Set", type="primary", width="stretch"):

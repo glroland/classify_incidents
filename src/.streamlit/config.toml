@@ -26,3 +26,6 @@ headingFontSizes = ["2.5rem", "1.5rem", "1rem"]
 
 [client]
 showSidebarNavigation = false
+
+[server]
+enableStaticServing = true

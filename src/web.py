@@ -16,8 +16,6 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("Streamline Operations with AI!")
-
 # Sidebar
 with st.sidebar:
     sidebar()
