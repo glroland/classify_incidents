@@ -34,3 +34,4 @@ def create_new():
             st.query_params.space_id = command.id
             st.query_params.subaction = actions.view_subactions.HOME
             st.query_params.action = actions.VIEW_EVALUATION
+            st.rerun()
