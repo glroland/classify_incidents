@@ -3,12 +3,14 @@ from datetime import date, timedelta
 from io import StringIO
 import streamlit as st
 from gateways.object_storage_gateway import ObjectStorageGateway
+from commands.from_snow import FromServiceNowCommand
 
 def import_from_snow(space_id):
     """ Display form to import data from Service Now """
     col1, col2 = st.columns([0.275, 0.735])
 
     # start date
+    start_date = None
     with col1:
         today = date.today()
         ninety_days_ago = today - timedelta(days=90)
@@ -16,6 +18,7 @@ def import_from_snow(space_id):
         start_date = st.date_input("Start date", value=ninety_days_ago_str, format="MM/DD/YYYY", width=150)
 
     # end date
+    end_date = None
     with col2:
         end_date = st.date_input("End date", value="today", format="MM/DD/YYYY", width=150)
 
@@ -33,7 +36,21 @@ def import_from_snow(space_id):
     )
 
     # submit button
-    st.button("Download from Service Now", type="primary")
+    if st.button("Download from Service Now", type="primary"):
+        from_snow_command = FromServiceNowCommand()
+        from_snow_command.space_id = space_id
+        from_snow_command.min_create_date = start_date
+        from_snow_command.max_create_date = end_date
+        from_snow_command.row_limit = -1
+        if limit_results == limit_option_testing:
+            from_snow_command.row_limit = 1
+        elif limit_results == limit_option_basic:
+            from_snow_command.row_limit = 10
+        elif limit_results != limit_option_all and limit_results is not None:
+            from_snow_command.row_limit = int(limit_results)
+        from_snow_command.go()
+        st.success("Successfully imported data from Service-Now!")
+
 
 def import_file(space_id):
     """ Display form to import data from csv file. """

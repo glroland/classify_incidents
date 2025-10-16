@@ -15,13 +15,19 @@ class ServiceNowGateway():
     SNOW_BASE_URL = "service-now.com/api/now/"
     HEADER_AUTH = "Authorization"
     HEADER_PREFIX_BASIC_AUTH = "Basic "
+    SNOW_QUERY = "sysparm_query"
+    SNOW_FIELDS = "sysparm_fields"
+    SNOW_LIMIT = "sysparm_limit"
+    SNOW_OFFSET = "sysparm_offset"
+    SNOW_DISPLAY_VALUE = "sysparm_display_value"
+    SNOW_FILTER_CREATE_DATE = "sys_created_on"
 
     # Service Now Action List
     class ServiceNowActions():
         """ List of SNOW Actions """
         SNOW_INCIDENT_TABLE : str = "table/incident"
 
-    def query_snow(self, parameters : list):
+    def query_snow(self, parameters : dict):
         """ Query Service Now with the given parameter list.
         
             parameters - search parameters
@@ -40,6 +46,7 @@ class ServiceNowGateway():
 
         # invoke snow api
         url = self.get_snow_url(self.ServiceNowActions.SNOW_INCIDENT_TABLE, parameters)
+        logger.info("SNOW URL: %s", url)
         headers = self.build_snow_headers()
         http_response = requests.get(url, headers=headers, timeout=settings.API_TIMEOUT)
         if http_response.status_code != 200:
@@ -51,11 +58,11 @@ class ServiceNowGateway():
         logger.info("JSON Resposne from ServiceNow Query = %s", json_response)
         return json_response
 
-    def get_snow_url(self, action : str, parameters : list[dict]) -> str:
+    def get_snow_url(self, action : str, parameters : dict) -> str:
         """ Builds the Service Now URL for the provided action. 
         
             action - service now action to perform
-            parameters - list of key value pairs to include in request url
+            parameters - dictionary of key value pairs to include in request url
         """
         # validate action
         if action is None or len(action) == 0:
@@ -73,7 +80,7 @@ class ServiceNowGateway():
         # build url
         url = "https://" + instance + "." + self.SNOW_BASE_URL + action
         if parameters is not None and len(parameters) > 0:
-            url += urlencode(parameters)
+            url += "?" + urlencode(parameters)
         logger.debug("ServiceNow URL for action '%s' and parameters '%s' = %s", \
                      action, parameters, url)
 
