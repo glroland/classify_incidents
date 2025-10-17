@@ -3,6 +3,7 @@ import logging
 import streamlit as st
 import pandas as pd
 from commands.load_space import LoadSpacesCommand
+from commands.from_space import FromSpaceCommand
 from web_components.actions import actions
 from web_components.import_data_set import import_data_set
 from gateways.object_storage_gateway import ObjectStorageGateway
@@ -20,6 +21,10 @@ def run_analysis(space_id):
     
         space_id - space id
     """
+    command = FromSpaceCommand()
+    command.space_id = space_id
+    command.go()
+    st.success("Analysis Complete!")
 
 def view_evaluation():
     # get evaluation id
