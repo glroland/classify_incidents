@@ -55,7 +55,7 @@ class FromServiceNowCommand(BaseModel):
         results = gateway.query_snow(parameters)
         logger.debug("SNOW Query Results: %s", results)
 
-        self.push_to_object_storage(results)
+        self.push_to_object_storage(results["result"])
 
     def push_to_object_storage(self, results):
         """ Save the provided data set back to object storage.
@@ -75,13 +75,18 @@ class FromServiceNowCommand(BaseModel):
             filename += "_from_" + self.min_create_date.strftime("%m-%d-%Y")
         if self.max_create_date is not None:
             filename += "_to_" + self.max_create_date.strftime("%m-%d-%Y")
-        if self.row_limit is not None:
+        if self.row_limit is not None and self.row_limit > 0:
             filename += "_limit_" + str(self.row_limit)
 
         # beautify json
-        results_str = json.dumps(results, indent=4)
+        #results_str = json.dumps(results, indent=4)
+
+        # create jsonl
+        jsonl = ""
+        for row in results:
+            jsonl += json.dumps(row) + "\n"
 
         # upload file
         gateway = ObjectStorageGateway()
-        path = f"{self.space_id}/raw/{filename}"
-        gateway.upload(path, results_str)
+        path = f"{self.space_id}/raw/{filename}.jsonl"
+        gateway.upload(path, jsonl)
