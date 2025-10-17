@@ -5,5 +5,6 @@ class DataFile(BaseModel):
     """ Metadata format for a data file. """
 
     filename : str = None
-    full_path : str = None
+    path : str = None
     parts : list[str] = None
+

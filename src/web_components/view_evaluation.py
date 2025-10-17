@@ -83,11 +83,11 @@ def view_evaluation():
                 selected = []
                 for data_file in raw_data_files:
                     filenames.append(data_file.filename)
-                    paths.append(data_file.full_path)
+                    paths.append(data_file.path)
                     selected.append(False)
                 raw_file_list = {
                     "Filename": filenames,
-                    "Full Path": paths,
+                    "Path": paths,
                     "Selected": selected,
                 }
                 df = pd.DataFrame(raw_file_list)
@@ -121,7 +121,7 @@ def view_evaluation():
                     if st.button("Delete Files", type="secondary", disabled=no_items_selected):
                         for index, row in selected_items.iterrows():
                             st.write(f"Deleting file: {row["Full Path"]}")
-                            gateway.delete(row["Full Path"])
+                            gateway.delete(row["Path"] + "/" + row["Filename"])
                             st.write("File deleted...")
                         st.success("Files deleted!  Please refresh page.")
 

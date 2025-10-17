@@ -1,6 +1,6 @@
 """ Command for Getting an existing Evaluation Space in web UI. """
 import logging
-import json
+import os
 from pathlib import Path
 from pydantic import BaseModel
 from metadata.evaluation_space import EvaluationSpaceMetadata
@@ -49,6 +49,6 @@ class LoadSpacesCommand(BaseModel):
                     if parts[1] == "raw":
                         data_file = DataFile()
                         data_file.filename = parts[2]
-                        data_file.full_path = file
+                        data_file.path = os.path.dirname(file)
                         data_file.parts = parts
                         self.raw_data_files.append(data_file)
