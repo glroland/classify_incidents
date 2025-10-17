@@ -1,5 +1,6 @@
 """ CLI Command for Analyzing Incidents directly from Service Now. """
 import logging
+import json
 from datetime import date
 from pydantic import BaseModel
 from gateways.snow_gateway import ServiceNowGateway
@@ -75,9 +76,12 @@ class FromServiceNowCommand(BaseModel):
         if self.max_create_date is not None:
             filename += "_to_" + self.max_create_date.strftime("%m-%d-%Y")
         if self.row_limit is not None:
-            filename += "_limit_" + self.row_limit
+            filename += "_limit_" + str(self.row_limit)
+
+        # beautify json
+        results_str = json.dumps(results, indent=4)
 
         # upload file
         gateway = ObjectStorageGateway()
         path = f"{self.space_id}/raw/{filename}"
-        gateway.upload(path, results)
+        gateway.upload(path, results_str)
