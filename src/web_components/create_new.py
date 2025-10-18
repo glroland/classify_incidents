@@ -10,23 +10,33 @@ def create_new():
     # evaluation name
     now = datetime.today()
     now_str = now.strftime("%m-%d-%Y @ %I:%M:%S %p")
-    eval_name_input = st.text_input("Name of evaluation space:", now_str, max_chars=25, width=400)
+    st.session_state.setdefault("eval_name_input", now_str)
+    eval_name_input = st.text_input("Name of evaluation space:",
+                                    value=st.session_state["eval_name_input"],
+                                    max_chars=25,
+                                    width=400)
+    if eval_name_input != st.session_state["eval_name_input"]:
+        st.session_state["eval_name_input"] = eval_name_input
 
     # evaluation description
     eval_desc_input = st.text_input("(Optional) Description:", "", max_chars=25, width=400)
 
     # submit button
     if st.button("Create", type="primary"):
-        if eval_name_input is None or len(eval_name_input) == 0:
+        name = st.session_state["eval_name_input"]
+        if name is None or len(name) == 0:
             st.error("Name is a required field and cannot be empty!")
         else:
             st.success("Inputs validated.  Creating space...")
 
             # create the space
             command = CreateSpaceCommand()
-            command.name = eval_name_input
+            command.name = name
             command.description = eval_desc_input
             command.go()
+
+            # clear session state
+            del st.session_state.eval_name_input
 
             st.success("Evaluation space created!")
 
