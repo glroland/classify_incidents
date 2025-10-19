@@ -95,6 +95,17 @@ def view_evaluation():
             st.header("Summary")
         with drill_down_tab:
             st.header("Drill Down into Findings")
+            if command.analysis is None:
+                st.write("Please click the 'Run Analysis' button to view analysis findings here.")
+            else:
+                analysis_csv = gateway.download(command.analysis)
+                analysis_csv_s = StringIO(analysis_csv)
+                df = pd.read_csv(analysis_csv_s)
+                st.dataframe(data=df, hide_index=True,
+                             column_config={
+                                "Incident_File": None,
+                                "Row": None
+                            })
         with raw_data_tab:
             st.header("View Uploaded Incident Data Sets")
             if len(raw_data_files) == 0:

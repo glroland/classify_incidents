@@ -17,6 +17,7 @@ class LoadSpacesCommand(BaseModel):
 
     # output responses
     metadata : EvaluationSpaceMetadata = None
+    analysis : str = None
     raw_data_files : list[DataFile] = []
 
     def go(self):
@@ -43,6 +44,10 @@ class LoadSpacesCommand(BaseModel):
 
             # find space
             if parts is not None and len(parts) > 0 and parts[0] == self.space_id:
+                if len(parts) == 2:
+                    if parts[1].lower() == "analysis.csv":
+                        self.analysis = file
+
                 if len(parts) >= 3:
 
                     # create data file object
