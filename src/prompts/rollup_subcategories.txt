@@ -8,20 +8,21 @@ The list of subcategories will be a comma delimited list.
 
 You must respond in JSON in the following form:
 [
-    {category: "generalized category name", subcategories: [subcategory1, subcategory2, ...]}
+    {"category": "generalized category name", "subcategories": ["subcategory1", "subcategory2", ...]}
 ]
 where the object has a key for each "subcategory" whose value is "category".
+JSON keys and values must be enclosed in double quotes.
 
 Example:
 Input: "Memory Pressure", "Compute Pressure", "Server Down"
 Output:
 [
     {
-        category: "System Resources",
-        subcategories: ["Memory Pressure", "Compute Pressure"]
+        "category": "System Resources",
+        "subcategories": ["Memory Pressure", "Compute Pressure"]
     },
     {
-        category: "Unplanned Outage",
-        subcategories: ["Server Down"]
+        "category": "Unplanned Outage",
+        "subcategories": ["Server Down"]
     }
 ]
