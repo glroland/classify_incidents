@@ -18,9 +18,10 @@ class FromStringCommand(BaseModel):
 
     # output responses
     summary : str = None
+    asset_name : str = None
     category : str = None
-    is_concluded : bool = None
-    was_labor_intensive : bool = None
+    is_manual : bool = None
+    is_outage : bool = None
     status : str = None
 
     def go(self):
@@ -48,9 +49,10 @@ class FromStringCommand(BaseModel):
                 step_2_response = gateway.simple_chat(prompts.STEP_2_ANALYZE, step_1_response)
                 logger.info("Step #2 Response == %s", step_2_response)
                 analysis = json.loads(step_2_response)
+                self.asset_name = analysis["asset_name"]
                 self.category = analysis["category"]
-                self.is_concluded = analysis["is_concluded"]
-                self.was_labor_intensive = analysis["was_labor_intensive"]
+                self.is_manual = analysis["is_manual"]
+                self.is_outage = analysis["is_outage"]
                 self.status = analysis["status"]
 
                 break

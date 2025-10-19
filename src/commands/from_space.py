@@ -58,8 +58,8 @@ class FromSpaceCommand(BaseModel):
                                        "Row",
                                        "Summary",
                                        "Subcategory",
-                                       "Is_Concluded",
-                                       "Was_Labor_Intensive",
+                                       "Is_Manual",
+                                       "Is_Outage",
                                        "Status"
                                        ])
 
@@ -90,8 +90,8 @@ class FromSpaceCommand(BaseModel):
                                        row_index,
                                        command.summary,
                                        command.category,
-                                       command.is_concluded,
-                                       command.was_labor_intensive,
+                                       command.is_manual,
+                                       command.is_outage,
                                        command.status
                                        ]
 
