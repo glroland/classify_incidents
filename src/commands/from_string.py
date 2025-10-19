@@ -1,6 +1,7 @@
 """ Command for Analyzing Instances via raw text. """
 import logging
 import json
+from datetime import datetime
 from pydantic import BaseModel
 from gateways.inference_gateway import InferenceGateway
 from utils.get_prompt import prompts
@@ -9,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 class FromStringCommand(BaseModel):
     """ Command processor for the From String action."""
+
+    # constants
+    DATETIME_FORMAT : str = "%Y-%m-%d %H:%M:%S"
 
     # configuration
     MAX_RETRIES : int = 3
@@ -23,6 +27,8 @@ class FromStringCommand(BaseModel):
     is_manual : bool = None
     is_outage : bool = None
     status : str = None
+    date_reported : datetime = None
+    date_resolved : datetime = None
 
     def go(self):
         """ Execute the command. """
@@ -54,6 +60,18 @@ class FromStringCommand(BaseModel):
                 self.is_manual = analysis["is_manual"]
                 self.is_outage = analysis["is_outage"]
                 self.status = analysis["status"]
+
+                if "date_reported" in analysis:
+                    date_reported_str = analysis["date_reported"]
+                    if date_reported_str is not None and len(date_reported_str) > 0:
+                        self.date_reported = datetime.strptime(date_reported_str, self.DATETIME_FORMAT)                
+                    logger.info("Date Reported.  Str=%s. Obj=%s", date_reported_str, self.date_reported)
+
+                if "date_resolved" in analysis:
+                    date_resolved_str = analysis["date_resolved"]
+                    if date_resolved_str is not None and len(date_resolved_str) > 0:
+                        self.date_resolved = datetime.strptime(date_resolved_str, self.DATETIME_FORMAT)  
+                    logger.info("Date Resolved.  Str=%s. Obj=%s", date_resolved_str, self.date_resolved)
 
                 break
             except Exception as e:  # pylint: disable=broad-exception-caught

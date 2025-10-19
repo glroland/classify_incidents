@@ -21,6 +21,12 @@ An alternative could be that it was created to log the result of an automated pr
 
 5. Status of the ticket.  This should reflect the service now case status when provided.
 
+6. Date Reported.  This is when the incident was opened.  Includes both Date and a Timestamp.
+In the event this cannot be identified, leave blank - never assume.
+
+7. Date Resolved.  This is when the incident was closed.  Includes both Date and a Timestamp.
+In the event this cannot be identified, leave blank - never assume.
+
 Your response must be in JSON format where the resulting object has a field for each item
 number.  Field names must be: "asset_name", "category", "is_manual", "is_outage", and
 "status".  
@@ -38,21 +44,26 @@ out of memory errors and the ticket was automatically closed when the memory fre
 }
 
 Example 2 - A new user request was submitted for a particular security domain and the ticket 
-was closed after the engineer completed the request.
+was closed after the engineer completed the request.  The ticket was opened on 3/1/2025 at noon 
+and closed on 3/15/2025 at 1 pm.
 {
     asset_name: "Active Directory",
     category: "New User",
     is_manual: true,
     is_outage: false,
-    status: "Complete"
+    status: "Complete",
+    date_reported: "2025/3/1 12:00:00",
+    date_resolved: "2025/3/15 13:00:00"
 }
 
 Example 3 - A server named mydata.files.com was reported as being down but the ticket was never 
-picked up and was automatically closed by the system after a week of inactivity.
+picked up and was automatically closed by the system after a week of inactivity.  The ticket
+was closed on 6/30/2025 at midnight.
 {
     asset_name: "mydata.files.com",
     category: "Server Down",
     is_manual: false,
     is_outage: true,
     status: "Closed Due To Inactivity"
+    date_reported: "2025/6/30 00:00:00"
 }

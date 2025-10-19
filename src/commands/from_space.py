@@ -65,11 +65,14 @@ class FromSpaceCommand(BaseModel):
 
         df = pd.DataFrame([], columns=["Incident_File", 
                                        "Row",
+                                       "Asset",
                                        "Summary",
                                        "Subcategory",
                                        "Is_Manual",
                                        "Is_Outage",
-                                       "Status"
+                                       "Status",
+                                       "Date_Reported",
+                                       "Date_Resolved"
                                        ])
 
         # process each file
@@ -97,11 +100,14 @@ class FromSpaceCommand(BaseModel):
                     # append row
                     df.loc[len(df)] = [file,
                                        row_index,
+                                       command.asset_name,
                                        command.summary,
                                        command.category,
                                        command.is_manual,
                                        command.is_outage,
-                                       command.status
+                                       command.status,
+                                       command.date_reported,
+                                       command.date_resolved
                                        ]
 
         # Augment data frame with new column for category
