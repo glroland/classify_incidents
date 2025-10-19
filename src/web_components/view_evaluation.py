@@ -2,6 +2,7 @@
 import logging
 import streamlit as st
 import pandas as pd
+from io import StringIO
 from commands.load_space import LoadSpacesCommand
 from commands.from_space import FromSpaceCommand
 from web_components.actions import actions
@@ -25,6 +26,22 @@ def run_analysis(space_id):
     command.space_id = space_id
     command.go()
     st.success("Analysis Complete!")
+
+@st.dialog("View raw data file", width="large", on_dismiss="ignore", dismissible=True)
+def view_raw_data_file(gateway, filename):
+    # download file
+    contents = gateway.download(filename)
+
+    # special handling for csvs
+    if filename.lower().endswith(".csv"):
+        # create dataframe for file contents
+        contents_s = StringIO(contents)
+        df = pd.read_csv(contents_s)
+
+        st.dataframe(data=df)
+    else:
+        # raw text
+        st.code(contents, language=None)
 
 def view_evaluation():
     # get evaluation id
@@ -119,7 +136,7 @@ def view_evaluation():
                 with col1:
                     if st.button("View File", type="secondary", disabled=one_item_not_selected):
                         for index, row in selected_items.iterrows():
-                            pass
+                            view_raw_data_file(gateway, row["Path"] + "/" + row["Filename"])
 
                 # Delete Button
                 with col2:
