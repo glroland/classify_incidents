@@ -19,10 +19,10 @@ def view_evaluation_analysis(space_id, command):
 
     gateway = ObjectStorageGateway()
 
-    st.header("Drill Down into Findings")
+    st.header("AI Analysis Results from ______")
 
     # actions list
-    if st.button("Run Analysis", type="primary"):
+    if st.button("(Re-) Run Analysis", type="primary"):
         run_analysis(space_id)
 
     if analysis is None:

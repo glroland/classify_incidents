@@ -6,7 +6,6 @@ from web_components.actions import actions
 from web_components.home import home
 from web_components.create_new_evaluation import create_new
 from web_components.evaluation_page import view_evaluation
-from web_components.import_data_set import import_data_set
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
