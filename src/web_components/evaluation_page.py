@@ -8,7 +8,8 @@ from web_components.evaluation_tab_summary import view_evaluation_summary
 from web_components.evaluation_tab_analysis import view_evaluation_analysis
 from web_components.evaluation_tab_rawdata import view_evaluation_raw_data
 from web_components.evaluation_tab_automation import view_evaluation_automation
-from gateways.object_storage_gateway import ObjectStorageGateway
+from web_components.evaluation_tab_import import view_evaluation_import
+from web_components.evaluation_tab_advanced import view_evaluation_advanced
 
 logger = logging.getLogger(__name__)
 
@@ -37,19 +38,29 @@ def view_evaluation():
         import_data_set(space_id)
     else:
         # default content
-        summary_tab, drill_down_tab, raw_data_tab, automation_tab = st.tabs( \
-            ["Summary", "Drill Down", "Raw Data", "Automation"], \
+        summary_tab, import_tab, raw_data_tab, analysis_tab, automation_tab, advanced_tab = st.tabs( \
+                ["Summary",
+                 "Import Incidents",
+                 "Raw Incident Files",
+                 "Incident-Level Analysis",
+                 "Automation",
+                 "Advanced"],
                 width="stretch", default=None)
 
         with summary_tab:
             view_evaluation_summary(space_id, command)
 
-        with drill_down_tab:
-            view_evaluation_analysis(space_id, command)
+        with import_tab:
+            view_evaluation_import(space_id, command)
 
         with raw_data_tab:
             view_evaluation_raw_data(space_id, command)
 
+        with analysis_tab:
+            view_evaluation_analysis(space_id, command)
+
         with automation_tab:
             view_evaluation_automation(space_id, command)
 
+        with advanced_tab:
+            view_evaluation_advanced(space_id, command)
