@@ -14,12 +14,14 @@ class Prompts:
     STEP_1_SUMMARIZE_FILENAME : str = "step_1_summarize.txt"
     STEP_2_ANALYZE_FILENAME : str = "step_2_analyze.txt"
     ROLLUP_SUBCATEGORIES_FILENAME : str = "rollup_subcategories.txt"
+    SUMMARIZE_ANALYSIS_FILENAME : str = "summarize_analysis.txt"
 
     # prompts
     # pylint: disable=invalid-name
     STEP_1_SUMMARIZE : str = None
     STEP_2_ANALYZE : str = None
     ROLLUP_SUBCATEGORIES : str = None
+    SUMMARIZE_ANALYSIS : str = None
 
     # other constants
     HTTP : str = "http"
@@ -30,6 +32,7 @@ class Prompts:
         self.STEP_1_SUMMARIZE = self.load_prompt(self.STEP_1_SUMMARIZE_FILENAME)
         self.STEP_2_ANALYZE = self.load_prompt(self.STEP_2_ANALYZE_FILENAME)
         self.ROLLUP_SUBCATEGORIES = self.load_prompt(self.ROLLUP_SUBCATEGORIES_FILENAME)
+        self.SUMMARIZE_ANALYSIS = self.load_prompt(self.SUMMARIZE_ANALYSIS_FILENAME)
 
     def load_prompt(self, filename : str) -> str:
         """ Loads the specified prompt from disk or a remote server. 

@@ -27,17 +27,13 @@ def sidebar():
             )
 
     # display title logo
-    st.markdown(
-        '<a href="." target="_self"><img src="/app/static/title.png" alt="HTML image" style="max-width: 100%;"></a>',
-        unsafe_allow_html=True
-    )
-
-    # Create new data set button
-    if st.button("Create New...", type="primary", width="stretch"):
-        st.query_params.action = actions.CREATE_EVALUATION
+    #st.markdown(
+    #    '<a href="." target="_self"><img src="/app/static/title.png" alt="HTML image" style="max-width: 100%;"></a>',
+    #    unsafe_allow_html=True
+    #)
 
     # Data set header
-    st.header("Prior Evaluations")
+    st.title("Incident Evaluations")
 
     # Display available data sets for selection
     spaces = get_spaces()
@@ -50,3 +46,7 @@ def sidebar():
             if st.button(f"{space.name}", type="tertiary", width="stretch"):
                 st.query_params.space_id = space.id
                 st.query_params.action = actions.VIEW_EVALUATION
+
+    # Create new data set button
+    if st.button("Create New...", type="primary", width="stretch"):
+        st.query_params.action = actions.CREATE_EVALUATION

@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from io import StringIO
 from web_components.actions import actions
+from gateways.object_storage_gateway import ObjectStorageGateway
 
 @st.dialog("View raw data file", width="large", on_dismiss="ignore", dismissible=True)
 def view_raw_data_file(gateway, filename):
@@ -22,6 +23,7 @@ def view_raw_data_file(gateway, filename):
 def view_evaluation_raw_data(space_id, command):
     metadata = command.metadata
     raw_data_files = command.raw_data_files
+    gateway = ObjectStorageGateway()
 
     st.header("View Uploaded Incident Data Sets")
 

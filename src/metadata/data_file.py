@@ -7,4 +7,3 @@ class DataFile(BaseModel):
     filename : str = None
     path : str = None
     parts : list[str] = None
-

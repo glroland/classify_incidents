@@ -14,12 +14,6 @@ from web_components.evaluation_tab_heat_map_server import view_evaluation_heat_m
 
 logger = logging.getLogger(__name__)
 
-def import_incidents(space_id):
-    """ Imports data.
-    
-        space_id - space id
-    """
-
 def view_evaluation():
     # get evaluation id
     space_id = st.query_params.space_id

@@ -3,7 +3,7 @@ import logging
 import uuid
 from pydantic import BaseModel
 from metadata.evaluation_space import EvaluationSpaceMetadata
-from gateways.object_storage_gateway import ObjectStorageGateway
+from utils.space_metadata import save_metadata
 
 logger = logging.getLogger(__name__)
 
@@ -36,11 +36,5 @@ class CreateSpaceCommand(BaseModel):
         metadata.id = self.id
         metadata.name = self.name
         metadata.description = self.description
-        contents = metadata.model_dump_json()
 
-        # build metadata path
-        path = f"{self.id}/metadata.json"
-
-        # create the evaluation space
-        gateway = ObjectStorageGateway()
-        gateway.upload(path, contents)
+        save_metadata(metadata)

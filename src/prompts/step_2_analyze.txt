@@ -21,10 +21,10 @@ An alternative could be that it was created to log the result of an automated pr
 
 5. Status of the ticket.  This should reflect the service now case status when provided.
 
-6. Date Reported.  This is when the incident was opened.  Includes both Date and a Timestamp.
+6. Date/Time Reported.  This is when the incident was opened (typically "sys_created_on").  
 In the event this cannot be identified, leave blank - never assume.
 
-7. Date Resolved.  This is when the incident was closed.  Includes both Date and a Timestamp.
+7. Date/Time Resolved.  This is when the incident was closed.  Includes both Date and a Timestamp.
 In the event this cannot be identified, leave blank - never assume.
 
 Your response must be in JSON format where the resulting object has a field for each item

@@ -2,6 +2,7 @@
 import os
 import logging
 import json
+from datetime import datetime
 from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 import pandas as pd
@@ -9,6 +10,8 @@ from commands.from_string import FromStringCommand
 from gateways.inference_gateway import InferenceGateway
 from gateways.object_storage_gateway import ObjectStorageGateway
 from utils.get_prompt import prompts
+from utils.space_metadata import load_metadata, save_metadata
+from metadata.evaluation_space import EvaluationSpaceMetadata
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +33,9 @@ class FromSpaceCommand(BaseModel):
 
     # output parameters
     analysis : pd.DataFrame = None
+    summary_prompt : str = None
+    summary : str = None
+    metadata : EvaluationSpaceMetadata = None
 
     def go(self):
         """ Execute the command. """
@@ -115,6 +121,10 @@ class FromSpaceCommand(BaseModel):
 
         self.analysis = df
 
+        # Summarize analysis
+        self.summarize_analysis(df)
+        self.update_space()
+
         # save analysis as a CSV
         analysis_csv = df.to_csv(index=False)
         gateway.upload(f"{self.space_id}/analysis.csv", analysis_csv)
@@ -150,19 +160,11 @@ class FromSpaceCommand(BaseModel):
 
         # convert subcategories into parent categories
         retries = 0
-        while retries < self.MAX_RETRIES:
-            categories_json_str = None
-            try:
-                categories_json_str = gateway.simple_chat(prompts.ROLLUP_SUBCATEGORIES,
-                                                          subcategories_csv)
-                logger.debug("Categories from Subcategories Response == %s", categories_json_str)
-                category_mappings = json.loads(categories_json_str)
+        categories_json_str = gateway.simple_chat(prompts.ROLLUP_SUBCATEGORIES,
+                                                    subcategories_csv)
+        logger.debug("Categories from Subcategories Response == %s", categories_json_str)
+        category_mappings = json.loads(categories_json_str)
 
-                if category_mappings is not None:
-                    break
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                logger.warning("An error occurred while trying to create generalized categories list.  Retrying...  Exception=%s.  JSON_String=%s", e, categories_json_str)   # pylint: disable=line-too-long
-                retries += 1
         if category_mappings is None:
             msg = "After several retries, the LLM was unable to produce a parsable list of JSON categories for processing.  Processing is failing..."   # pylint: disable=line-too-long
             logger.error(msg)
@@ -216,3 +218,56 @@ class FromSpaceCommand(BaseModel):
         # no match
         logger.warning("No match found for subcategory.  Subcategory=%s", subcategory)
         return None
+
+    def summarize_analysis(self, df):
+        """ Summarize analysis data.
+
+            df - data frame
+        """
+        # setup inference gateway
+        gateway = InferenceGateway()
+
+        # build datasets for summary
+        group_by_asset = df.groupby('Asset').size().sort_values(ascending=False).head(10)
+        group_by_category = df.groupby('Category').size().sort_values(ascending=False)
+        group_by_status = df.groupby('Status').size().sort_values(ascending=False)
+        is_manual_count = len(df[df['Is_Manual'] == True])
+        is_outage_count = len(df[df['Is_Outage'] == True])
+        date_reported_series = pd.to_datetime(df['Date_Reported'], format='%Y-%m-%d %H:%M:%S').dropna()
+        oldest_date = date_reported_series.min()
+        newest_date = date_reported_series.max()
+
+        # build summary text based on
+        summary_prompt = f"Incidents reported between {oldest_date} and {newest_date}, inclusively: {len(df)}\n"
+        summary_prompt += "\n"
+        summary_prompt += f"# of incidents that required human effort: {is_manual_count}\n"
+        summary_prompt += f"# of incidents associated with a service interruption/outage: {is_outage_count}\n"
+        summary_prompt += "\n"
+        summary_prompt += "Servers and other assets with the highest incident counts:\n"
+        summary_prompt += f"{group_by_asset.to_string(header=False, dtype=False)}\n"
+        summary_prompt += "\n"
+        summary_prompt += "Incident counts by category:\n"
+        summary_prompt += f"{group_by_category.to_string(header=False, dtype=False)}\n"
+        summary_prompt += "\n"
+        summary_prompt += "Incident counts by status:\n"
+        summary_prompt += f"{group_by_status.to_string(header=False, dtype=False)}\n"
+
+        self.summary_prompt = summary_prompt
+
+        # ask LLM to summarize summary prompt
+        self.summary = gateway.simple_chat(prompts.SUMMARIZE_ANALYSIS,
+                                           summary_prompt)
+
+    def update_space(self):
+        """ Update the space metadata file with the updated information. """
+
+        # get space metadata from object storage
+        self.metadata = load_metadata(self.space_id)
+
+        # update evaluation metadata
+        self.metadata.last_analysis_date = datetime.now()
+        self.metadata.summary_prompt = self.summary_prompt
+        self.metadata.summary = self.summary
+
+        # create the evaluation space
+        save_metadata(self.metadata)
