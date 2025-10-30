@@ -233,7 +233,7 @@ class FromSpaceCommand(BaseModel):
         group_by_status = df.groupby('Status').size().sort_values(ascending=False)
         is_manual_count = len(df[df['Is_Manual'] == True])
         is_outage_count = len(df[df['Is_Outage'] == True])
-        date_reported_series = pd.to_datetime(df['Date_Reported'], format='%Y-%m-%d %H:%M:%S').dropna()
+        date_reported_series = pd.to_datetime(df['Date_Reported'], format='%Y/%m/%d %H:%M:%S').dropna()
         oldest_date = date_reported_series.min()
         newest_date = date_reported_series.max()
 

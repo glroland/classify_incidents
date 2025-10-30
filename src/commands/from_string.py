@@ -12,7 +12,7 @@ class FromStringCommand(BaseModel):
     """ Command processor for the From String action."""
 
     # constants
-    DATETIME_FORMAT : str = "%Y-%m-%d %H:%M:%S"
+    DATETIME_FORMAT : str = "%Y/%m/%d %H:%M:%S"
 
     # configuration
     MAX_RETRIES : int = 3
