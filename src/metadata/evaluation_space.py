@@ -1,5 +1,6 @@
 """ Evaluation Space Metadata Type """
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 
 class EvaluationSpaceMetadata(BaseModel):
@@ -15,10 +16,10 @@ class EvaluationSpaceMetadata(BaseModel):
     description : str = ""
 
     # last incident analysis date
-    last_analysis_date : datetime = None
+    last_analysis_date : Optional[datetime] = None
 
     # summary prompt
-    summary_prompt : str = ""
+    summary_prompt : Optional[str] = None
 
     # summary
-    summary : str = ""
+    summary : Optional[str] = None
