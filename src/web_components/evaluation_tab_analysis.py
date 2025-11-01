@@ -1,8 +1,5 @@
 import streamlit as st
-import pandas as pd
-from io import StringIO
 from commands.from_space import FromSpaceCommand
-from gateways.object_storage_gateway import ObjectStorageGateway
 from utils.space_metadata import load_metadata
 
 def run_analysis(space_id):
@@ -16,10 +13,8 @@ def run_analysis(space_id):
     st.success("Analysis Complete!")
 
 def view_evaluation_analysis(space_id, command):
-    analysis = command.analysis
+    analysis_df = command.analysis_df
     metadata = load_metadata(space_id)
-
-    gateway = ObjectStorageGateway()
 
     last_analysis_from = ""
     if metadata.last_analysis_date is not None:
@@ -31,13 +26,10 @@ def view_evaluation_analysis(space_id, command):
     if st.button("(Re-) Run Analysis", type="primary"):
         run_analysis(space_id)
 
-    if analysis is None:
+    if analysis_df is None:
         st.write("Please click the 'Run Analysis' button to view analysis findings here.")
     else:
-        analysis_csv = gateway.download(analysis)
-        analysis_csv_s = StringIO(analysis_csv)
-        df = pd.read_csv(analysis_csv_s)
-        st.dataframe(data=df, hide_index=True,
+        st.dataframe(data=analysis_df, hide_index=True,
                         column_config={
                         "Incident_File": None,
                         "Row": None

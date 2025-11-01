@@ -10,3 +10,4 @@ dotenv
 streamlit
 watchdog
 boto3
+plotly

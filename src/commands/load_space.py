@@ -2,7 +2,9 @@
 import logging
 import os
 from pathlib import Path
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+import pandas as pd
+from io import StringIO
 from metadata.evaluation_space import EvaluationSpaceMetadata
 from metadata.data_file import DataFile
 from gateways.object_storage_gateway import ObjectStorageGateway
@@ -12,12 +14,15 @@ logger = logging.getLogger(__name__)
 class LoadSpacesCommand(BaseModel):
     """ Command processor for the Load Evaluation Space action."""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     # input parameters
     space_id : str = None
 
     # output responses
     metadata : EvaluationSpaceMetadata = None
-    analysis : str = None
+    analysis_filename : str = None
+    analysis_df : pd.DataFrame = None
     raw_data_files : list[DataFile] = []
 
     def go(self):
@@ -46,7 +51,7 @@ class LoadSpacesCommand(BaseModel):
             if parts is not None and len(parts) > 0 and parts[0] == self.space_id:
                 if len(parts) == 2:
                     if parts[1].lower() == "analysis.csv":
-                        self.analysis = file
+                        self.analysis_filename = file
 
                 if len(parts) >= 3:
 
@@ -57,3 +62,9 @@ class LoadSpacesCommand(BaseModel):
                         data_file.path = os.path.dirname(file)
                         data_file.parts = parts
                         self.raw_data_files.append(data_file)
+
+        # load analysis, if exists
+        if self.analysis_filename is not None and len(self.analysis_filename) > 0:
+            analysis_csv = gateway.download(self.analysis_filename)
+            analysis_csv_s = StringIO(analysis_csv)
+            self.analysis_df = pd.read_csv(analysis_csv_s)
