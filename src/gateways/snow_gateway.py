@@ -111,3 +111,15 @@ class ServiceNowGateway():
 
         logger.debug("SNOW Headers: %s", headers)
         return headers
+
+    def date_to_string(self, date_obj) -> str:
+        """ Convert the provided date object to a string format compatible with service now api.
+        
+            date_obj - date object
+        """
+        if date_obj is None:
+            msg = "Date Object is a required parameter but is empty!"
+            logger.error(msg)
+            raise ValueError(msg)
+
+        return date_obj.strftime("%Y-%m-%d") + " 00:00:00"

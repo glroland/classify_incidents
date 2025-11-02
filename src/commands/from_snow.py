@@ -38,11 +38,11 @@ class FromServiceNowCommand(BaseModel):
         # build query
         query = ""
         if self.min_create_date is not None:
-            query += gateway.SNOW_FILTER_CREATE_DATE + ">=" + self.min_create_date.strftime("%Y-%m-%d") + " 00:00:00"
+            query += gateway.SNOW_FILTER_CREATE_DATE + ">=" + gateway.date_to_string(self.min_create_date)
         if self.max_create_date is not None:
             if len(query) > 0:
                 query += "&"
-            query += gateway.SNOW_FILTER_CREATE_DATE + "<" + (self.max_create_date + timedelta(days=1)).strftime("%Y-%m-%d") + " 00:00:00"
+            query += gateway.SNOW_FILTER_CREATE_DATE + "<" + gateway.date_to_string(self.max_create_date + timedelta(days=1))
         logger.info("SNOW Query: %s", query)
 
         # build parameters list
