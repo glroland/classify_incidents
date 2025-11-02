@@ -79,7 +79,8 @@ def view_evaluation_raw_data(space_id, command):
         with col2:
             if st.button("Delete Files", type="secondary", disabled=no_items_selected):
                 for index, row in selected_items.iterrows():
-                    st.write(f"Deleting file: {row["Full Path"]}")
-                    gateway.delete(row["Path"] + "/" + row["Filename"])
+                    full_path = row["Path"] + "/" + row["Filename"]
+                    st.write(f"Deleting file: {full_path}")
+                    gateway.delete(full_path)
                     st.write("File deleted...")
                 st.success("Files deleted!  Please refresh page.")

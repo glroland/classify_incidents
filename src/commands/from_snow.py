@@ -1,7 +1,7 @@
 """ CLI Command for Analyzing Incidents directly from Service Now. """
 import logging
 import json
-from datetime import date
+from datetime import date, timedelta
 from pydantic import BaseModel
 from gateways.snow_gateway import ServiceNowGateway
 from gateways.object_storage_gateway import ObjectStorageGateway
@@ -38,12 +38,12 @@ class FromServiceNowCommand(BaseModel):
         # build query
         query = ""
         if self.min_create_date is not None:
-            query += gateway.SNOW_FILTER_CREATE_DATE + ">=" + self.min_create_date.strftime("%m-%d-%Y")
+            query += gateway.SNOW_FILTER_CREATE_DATE + ">=" + self.min_create_date.strftime("%Y-%m-%d") + " 00:00:00"
         if self.max_create_date is not None:
             if len(query) > 0:
                 query += "&"
-            query += gateway.SNOW_FILTER_CREATE_DATE + ">=" + self.max_create_date.strftime("%m-%d-%Y")
-        logger.debug("SNOW Query: %s", query)
+            query += gateway.SNOW_FILTER_CREATE_DATE + "<" + (self.max_create_date + timedelta(days=1)).strftime("%Y-%m-%d") + " 00:00:00"
+        logger.info("SNOW Query: %s", query)
 
         # build parameters list
         parameters = {}

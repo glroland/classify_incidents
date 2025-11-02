@@ -55,7 +55,7 @@ class ServiceNowGateway():
             raise ValueError(msg)
         json_response = http_response.json()
 
-        logger.info("JSON Resposne from ServiceNow Query = %s", json_response)
+        logger.debug("JSON Resposne from ServiceNow Query = %s", json_response)
         return json_response
 
     def get_snow_url(self, action : str, parameters : dict) -> str:
