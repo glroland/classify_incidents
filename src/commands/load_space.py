@@ -68,3 +68,5 @@ class LoadSpacesCommand(BaseModel):
             analysis_csv = gateway.download(self.analysis_filename)
             analysis_csv_s = StringIO(analysis_csv)
             self.analysis_df = pd.read_csv(analysis_csv_s)
+            logger.info("Resulting Analysis Data Frame Shape: %s", self.analysis_df.shape)
+            logger.info("Analysis Data Frame Head: %s", self.analysis_df.head())
