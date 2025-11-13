@@ -6,6 +6,11 @@ def show_asset_heatmap_widget(df):
     
         df - analysis dataframe
     """
+    # validate that key columns exist before trying to render
+    if not "Date_Reported" in df.columns:
+        st.write("Unsupported Data Import version.  Skipping heatmap render.")
+        return
+
     # prepare data
     null_date_val = df["Date_Reported"].dropna().min()
     df["Date_Reported"] = df["Date_Reported"].fillna(null_date_val)
