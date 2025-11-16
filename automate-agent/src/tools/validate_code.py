@@ -1,8 +1,49 @@
 """ Validate Generated Code Tool """
+import os
 import logging
-from utils.constants import SUPPORTED_LANGUAGES
+import uuid
+import subprocess
+from utils.constants import SUPPORTED_LANGUAGES, LANGUAGE_ANSIBLE
+from utils.settings import settings
 
 logger = logging.getLogger(__name__)
+
+def validate_ansible(playbook_code):
+    """ Validates the provided Ansible playbook code using Ansible Lint.
+    
+        playbook_code - Ansible Playbook
+    
+        Returns: validation results
+    """
+    # save playbook to a temp file on disk
+    filename = uuid.uuid4() + ".yaml"
+    temp_file_path = os.path.join(settings.WORK_DIR, filename)
+
+    # Create and write to the temporary file
+    with open(temp_file_path, "w") as file:
+        file.write(playbook_code)
+
+    # run ansible lint
+    command = ["ansible-lint", temp_file_path]
+    response = None
+    try:
+        logger.info("Running ansible-lint:  Command=%s", command)
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+        logger.info("Ansible Lint completed successfully.  Result=%s", result.stdout)
+        response = result.stdout
+    except subprocess.CalledProcessError as e:
+        logger.error("Ansible Lint failed with errors.  Result=%s", e.stderr)
+        response = e.stderr
+    except FileNotFoundError:
+        msg = "ERROR: Ansible-lint command not found.  Ensure its installed and in PATH."
+        logger.fatal(msg)
+        response = msg
+
+    # delete the temp file
+    os.remove(temp_file_path)
+
+    return response
+
 
 async def validate_code(language: str, source_code: str) -> str:
     """ (Step 5 of 5)  Validates the syntax and quality of the provided source code. 
@@ -31,5 +72,8 @@ async def validate_code(language: str, source_code: str) -> str:
         logger.error(msg)
         return msg
 
+    # validate ansible
+    if language == LANGUAGE_ANSIBLE:
+        return validate_ansible(source_code)
 
-    return "VALID"
+    return "Unable to validate source code.  Assuming to be fine."

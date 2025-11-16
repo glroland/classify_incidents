@@ -71,4 +71,13 @@ class Settings(BaseSettings):
         },
     )
 
+    # working directory for various tools, like ansible-lint
+    WORK_DIR: str = Field(
+        default="/tmp",
+        json_schema_extra={
+            "env": "WORK_DIR",
+            "description": "Working Directory for Temp Files",
+        },
+    )
+
 settings = Settings()

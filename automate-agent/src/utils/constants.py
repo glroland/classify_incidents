@@ -1,3 +1,8 @@
 """ Constants for Automation Agent """
 
-SUPPORTED_LANGUAGES = ["java", "bash", "ansible"]
+LANGUAGE_JAVA = "java"
+LANGUAGE_BASH = "bash"
+LANGUAGE_POWERSHELL = "powershell"
+LANGUAGE_ANSIBLE = "ansible"
+
+SUPPORTED_LANGUAGES = [LANGUAGE_JAVA, LANGUAGE_BASH, LANGUAGE_POWERSHELL, LANGUAGE_ANSIBLE]

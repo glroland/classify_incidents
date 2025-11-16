@@ -3,3 +3,4 @@ pytest
 pydantic
 fastmcp
 openai
+ansible-lint
