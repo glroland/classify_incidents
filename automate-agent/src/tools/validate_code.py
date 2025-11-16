@@ -3,46 +3,99 @@ import os
 import logging
 import uuid
 import subprocess
-from utils.constants import SUPPORTED_LANGUAGES, LANGUAGE_ANSIBLE
+from utils.constants import SUPPORTED_LANGUAGES, LANGUAGE_ANSIBLE, LANGUAGE_BASH, LANGUAGE_POWERSHELL
 from utils.settings import settings
 
 logger = logging.getLogger(__name__)
 
-def validate_ansible(playbook_code):
+def validate_ansible(source_file):
     """ Validates the provided Ansible playbook code using Ansible Lint.
     
-        playbook_code - Ansible Playbook
+        source_file - Ansible Playbook
     
         Returns: validation results
     """
-    # save playbook to a temp file on disk
-    filename = uuid.uuid4() + ".yaml"
-    temp_file_path = os.path.join(settings.WORK_DIR, filename)
-
-    # Create and write to the temporary file
-    with open(temp_file_path, "w") as file:
-        file.write(playbook_code)
-
     # run ansible lint
-    command = ["ansible-lint", temp_file_path]
-    response = None
+    command = ["ansible-lint", source_file]
     try:
         logger.info("Running ansible-lint:  Command=%s", command)
         result = subprocess.run(command, capture_output=True, text=True, check=True)
         logger.info("Ansible Lint completed successfully.  Result=%s", result.stdout)
-        response = result.stdout
+        return result.stdout
     except subprocess.CalledProcessError as e:
         logger.error("Ansible Lint failed with errors.  Result=%s", e.stderr)
-        response = e.stderr
+        return "ERROR: " + e.stderr
     except FileNotFoundError:
         msg = "ERROR: Ansible-lint command not found.  Ensure its installed and in PATH."
         logger.fatal(msg)
-        response = msg
+        return msg
 
-    # delete the temp file
-    os.remove(temp_file_path)
 
-    return response
+def validate_bash(source_file):
+    """ Validates the provided Bash Script.
+    
+        source_file - Bash Script
+    
+        Returns: validation results
+    """
+    # run shellcheck
+    command = ["shellcheck", source_file]
+    try:
+        logger.info("Running shellcheck:  Command=%s", command)
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            check=False  # ShellCheck returns non-zero for warnings/errors
+        )
+        if result.returncode == 0:
+            logger.info("Shellcheck completed successfully.  Result=%s", result.stdout)
+            return result.stdout
+        else:
+            logger.error("Shellcheck reponded with an error.  Error=%s", result.stdout)
+            return "ERROR: " + result.stdout
+    except FileNotFoundError:
+        msg = "ERROR: ShellCheck not found. Please install it and add to PATH."
+        logger.error(msg)
+        return msg
+
+
+def validate_powershell(source_file):
+    """ Validates the provided Powershell Script.
+    
+        source_file - Powershell Script
+    
+        Returns: validation results
+    """
+    # run shellcheck
+    command = ["pwsh", "-Command", f"Invoke-ScriptAnalyzer -Path '{source_file}' | ConvertTo-Json"]
+    try:
+        logger.info("Running pwsh:  Command=%s", command)
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        # PSScriptAnalyzer returns JSON output if successful.
+        # If there are no errors, the JSON list might be empty.
+        if "[]" in result.stdout.strip() or not result.stdout.strip():
+            msg = f"Syntax check passed.  No errors detected in powershell script."
+            logger.info(msg)
+            return msg
+        else:
+            msg = f"ERROR: Syntax errors found in powershell script!  Errors={result.stdout}"
+            logger.error(msg)
+            return msg
+
+    except subprocess.CalledProcessError as e:
+        logger.error("Powershell failed with errors.  Result=%s", e.stderr)
+        return "ERROR: " + e.stderr
+    except FileNotFoundError:
+        msg = "ERROR: Powershell not found. Please install it and add to PATH."
+        logger.error(msg)
+        return msg
 
 
 async def validate_code(language: str, source_code: str) -> str:
@@ -72,8 +125,26 @@ async def validate_code(language: str, source_code: str) -> str:
         logger.error(msg)
         return msg
 
-    # validate ansible
-    if language == LANGUAGE_ANSIBLE:
-        return validate_ansible(source_code)
+    # save source to a temp file on disk
+    filename = uuid.uuid4()
+    temp_file_path = os.path.join(settings.WORK_DIR, filename)
+    with open(temp_file_path, "w") as file:
+        file.write(source_code)
 
-    return "Unable to validate source code.  Assuming to be fine."
+    # validate ansible
+    result = None
+    if language == LANGUAGE_ANSIBLE:
+        result = validate_ansible(source_code)
+    elif language == LANGUAGE_BASH:
+        result = validate_bash(source_code)
+    elif language == LANGUAGE_POWERSHELL:
+        result = validate_powershell(source_code)
+
+    # delete the temp file
+    os.remove(temp_file_path)
+
+    # return result
+    if result is None:
+        result = "Unable to validate source code.  Assuming to be fine."
+    logger.info("Validation Result: %s", result)
+    return result
