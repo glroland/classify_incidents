@@ -151,7 +151,12 @@ class FromSpaceCommand(BaseModel):
                 if len(subcategories_csv) > 0:
                     subcategories_csv += ","
                 subcategories_csv += subcategory
-        logger.debug("Subcategories CSV...   '%s'", subcategories_csv)
+        logger.info("Subcategories CSV...   '%s'", subcategories_csv)
+
+        # skip category analysis in the event subcategories is empty
+        if subcategories_csv is None or len(subcategories_csv) == 0:
+            logger.warning("Subcategories list is empty.  Odd considering the master list was just checked and was valid.  List=%s", subcategories)
+            return df
 
         # setup inference gateway
         gateway = InferenceGateway()
