@@ -48,4 +48,27 @@ class Settings(BaseSettings):
         },
     )
 
+    # Model Configuration
+    PLANNING_MODEL: str = Field(
+        default="openai/gpt-5",
+        json_schema_extra={
+            "env": "PLANNING_MODEL",
+            "description": "Planning Model",
+        },
+    )
+    JUDGE_PLAN_MODEL: str = Field(
+        default="claude/sonnet",
+        json_schema_extra={
+            "env": "JUDGE_PLAN_MODEL",
+            "description": "Model to Judge Plan",
+        },
+    )
+    CODING_MODEL: str = Field(
+        default="claude/sonnet",
+        json_schema_extra={
+            "env": "CODING_MODEL",
+            "description": "Coding Model",
+        },
+    )
+
 settings = Settings()

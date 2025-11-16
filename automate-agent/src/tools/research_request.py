@@ -22,4 +22,4 @@ async def research_request(user_request: str) -> str:
         return msg
 
 
-    return "RESEARCH"
+    return "All servers are RHEL"

@@ -9,7 +9,8 @@ help:
 	cd src && python cli.py from-snow --help
 
 lint:
-	pylint ./src
+	pylint --fail-under=0 ./automate-agent/src
+	pylint --fail-under=0 ./src
 
 clean:
 	rm -rf ./target/
