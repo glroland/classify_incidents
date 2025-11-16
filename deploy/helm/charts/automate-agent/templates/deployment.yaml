@@ -51,6 +51,8 @@ spec:
               value: "{{ .Values.image.port }}"
             - name: SERVER_ADDRESS
               value: "0.0.0.0"
+            - name: MCP_PROTOCOL
+              value: "http"
             - name: OPENAI_BASE_URL
               valueFrom:
                 configMapKeyRef:

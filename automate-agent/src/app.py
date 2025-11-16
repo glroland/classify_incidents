@@ -24,7 +24,7 @@ def main():
     mcp.tool(validate_code)
 
     # Run the FastMCP app
-    mcp.run(transport="sse", host=settings.SERVER_ADDRESS, port=settings.SERVER_PORT)
+    mcp.run(transport=settings.MCP_PROTOCOL, host=settings.SERVER_ADDRESS, port=settings.SERVER_PORT)
 
 if __name__ == "__main__":
     main()

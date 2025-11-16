@@ -30,6 +30,14 @@ class Settings(BaseSettings):
             "example": "8080",
         },
     )
+    MCP_PROTOCOL: str = Field(
+        default="http",
+        json_schema_extra={
+            "env": "MCP_PROTOCOL",
+            "description": "MCP Protocol to use",
+            "example": "sse,http",
+        },
+    )
 
     # OpenAI API Endpoint
     OPENAI_BASE_URL: str = Field(
@@ -57,14 +65,14 @@ class Settings(BaseSettings):
         },
     )
     JUDGE_PLAN_MODEL: str = Field(
-        default="claude/sonnet",
+        default="anthropic/claude-3-7-sonnet-20250219",
         json_schema_extra={
             "env": "JUDGE_PLAN_MODEL",
             "description": "Model to Judge Plan",
         },
     )
     CODING_MODEL: str = Field(
-        default="claude/sonnet",
+        default="anthropic/claude-3-7-sonnet-20250219",
         json_schema_extra={
             "env": "CODING_MODEL",
             "description": "Coding Model",
