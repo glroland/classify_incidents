@@ -163,7 +163,12 @@ class FromSpaceCommand(BaseModel):
         categories_json_str = gateway.simple_chat(prompts.ROLLUP_SUBCATEGORIES,
                                                     subcategories_csv)
         logger.debug("Categories from Subcategories Response == %s", categories_json_str)
-        category_mappings = json.loads(categories_json_str)
+        try:
+            category_mappings = json.loads(categories_json_str)
+        except json.decoder.JSONDecodeError as e:
+            msg = "Unable to decode JSON from LLM.  JSON String = {categories_json_str}"
+            logger.error(msg)
+            raise e
 
         if category_mappings is None:
             msg = "After several retries, the LLM was unable to produce a parsable list of JSON categories for processing.  Processing is failing..."   # pylint: disable=line-too-long

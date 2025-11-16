@@ -1,0 +1,5 @@
+pylint
+pytest
+pydantic
+fastmcp
+openai
