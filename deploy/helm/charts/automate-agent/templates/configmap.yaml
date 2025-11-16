@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "automate-it.fullname" . }}
+  labels:
+    {{- include "automate-it.labels" . | nindent 4 }}
+immutable: false
+data:
+  MCP_HOST: "0.0.0.0"
+  MCP_TRANSPORT_PROTOCOL: "http"
+  PYTHON_LOG_LEVEL: "DEBUG"
+  POSTGRES_CONNNECTION_STRING: "postgresql://baseball_app:baseball123@db.home.glroland.com:5432/baseball_db"
+  ANTHROPIC_API_KEY: "none"
+  LLM_MODEL_NAME: "claude-sonnet-4-20250514"
+  LLM_MAX_OUTPUT_TOKENS: "4096"
+  LLM_MAX_PROMPT_LENGTH: "1000000"
+  GUIDANCE_ROOT: "/projects/guidance"

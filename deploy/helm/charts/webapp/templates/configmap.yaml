@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "automate-it.fullname" . }}
+  labels:
+    {{- include "automate-it.labels" . | nindent 4 }}
+immutable: false
+data:
+  LLAMA_STACK_URL: "http://my-llama-stack.my-llama-stack.svc:8080"
+  OPENAI_BASE_URL: "http://my-llama-stack.my-llama-stack.svc:8080/v1/openai/v1"
+  MODEL: "openai/gpt-4"
+  AGENT_ASKSQL_URL: "http://{{ .Release.Name }}-agent-asksql.automate-it.svc:8080/sse"
