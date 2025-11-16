@@ -6,7 +6,16 @@ metadata:
     {{- include "automate-it.labels" . | nindent 4 }}
 immutable: false
 data:
-  LLAMA_STACK_URL: "http://my-llama-stack.my-llama-stack.svc:8080"
-  OPENAI_BASE_URL: "http://my-llama-stack.my-llama-stack.svc:8080/v1/openai/v1"
-  MODEL: "openai/gpt-4"
-  AGENT_ASKSQL_URL: "http://{{ .Release.Name }}-agent-asksql.automate-it.svc:8080/sse"
+  OPENAI_BASE_URL: "http://my-llama-stack.my-llama-stack.svc:8080/v1"
+  OPENAI_API_KEY: "not_provided"
+  OPENAI_MODEL: "granite4"
+  AUTOMATE_AGENT_URL: "http://{{ .Release.Name }}-automate-agent.automate-it.svc:8080/mcp"
+  SERVICE_NOW_INSTANCE: ""
+  SERVICE_NOW_USERNAME: ""
+  SERVICE_NOW_PASSWORD: ""
+  API_TIMEOUT: "60"
+  PROMPTS_LOCATION: "./prompts/"
+  OBJECT_STORAGE_URL: ""
+  OBJECT_STORAGE_ACCESS_KEY: ""
+  OBJECT_STORAGE_SECRET_KEY: ""
+  OBJECT_STORAGE_BUCKET: ""

@@ -37,6 +37,15 @@ class Settings(BaseSettings):
         },
     )
 
+    # MCP Servers
+    AUTOMATE_AGENT_URL: str = Field(
+        default="",
+        json_schema_extra={
+            "env": "AUTOMATE_AGENT_URL",
+            "description": "Automation Agent URL",
+        },
+    )
+
     # ServiceNow Configuration
     SERVICE_NOW_INSTANCE: str = Field(
         default="",

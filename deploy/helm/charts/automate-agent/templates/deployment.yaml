@@ -47,49 +47,41 @@ spec:
           ports:
           - containerPort: {{ .Values.image.port }}
           env:
-            - name: MCP_PORT
+            - name: SERVER_PORT
               value: "{{ .Values.image.port }}"
-            - name: POSTGRES_CONNNECTION_STRING
+            - name: SERVER_ADDRESS
+              value: "0.0.0.0"
+            - name: OPENAI_BASE_URL
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "automate-it.fullname" . }}
-                  key: POSTGRES_CONNNECTION_STRING
-            - name: MCP_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
-                  key: MCP_HOST
-            - name: MCP_TRANSPORT_PROTOCOL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
-                  key: MCP_TRANSPORT_PROTOCOL
-            - name: PYTHON_LOG_LEVEL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
-                  key: PYTHON_LOG_LEVEL
-            - name: ANTHROPIC_API_KEY
+                  key: OPENAI_BASE_URL
+            - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
-                  key: ANTHROPIC_API_KEY
+                  key: OPENAI_API_KEY
                   optional: true
-            - name: LLM_MODEL_NAME
+            - name: PLANNING_MODEL
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "automate-it.fullname" . }}
-                  key: LLM_MODEL_NAME
-            - name: LLM_MAX_OUTPUT_TOKENS
+                  key: PLANNING_MODEL
+            - name: JUDGE_PLAN_MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: JUDGE_PLAN_MODEL
+            - name: CODING_MODEL
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "automate-it.fullname" . }}
                   key: LLM_MAX_OUTPUT_TOKENS
-            - name: LLM_MAX_PROMPT_LENGTH
+            - name: CODING_MODEL
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "automate-it.fullname" . }}
-                  key: LLM_MAX_PROMPT_LENGTH
+                  key: CODING_MODEL
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           {{- if .Values.resources.enabled }}

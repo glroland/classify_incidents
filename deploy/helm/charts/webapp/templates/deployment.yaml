@@ -41,28 +41,72 @@ spec:
           ports:
           - containerPort: {{ .Values.image.port }}
           env:
-            - name: LLAMA_STACK_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
-                  key: LLAMA_STACK_URL
+            - name: SERVER_PORT
+              value: "{{ .Values.image.port }}"
+            - name: SERVER_ADDRESS
+              value: "0.0.0.0"
             - name: OPENAI_BASE_URL
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "automate-it.fullname" . }}
                   key: OPENAI_BASE_URL
-            - name: MODEL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
-                  key: MODEL
-            - name: AGENT_ASKSQL_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
-                  key: AGENT_ASKSQL_URL
             - name: OPENAI_API_KEY
               value: "nokeyneeded"
+            - name: OPENAI_MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: OPENAI_MODEL
+            - name: AUTOMATE_AGENT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: AUTOMATE_AGENT_URL
+            - name: SERVICE_NOW_INSTANCE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: SERVICE_NOW_INSTANCE
+            - name: SERVICE_NOW_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: SERVICE_NOW_USERNAME
+            - name: SERVICE_NOW_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: SERVICE_NOW_PASSWORD
+            - name: API_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: API_TIMEOUT
+            - name: PROMPTS_LOCATION
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: PROMPTS_LOCATION
+            - name: OBJECT_STORAGE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: OBJECT_STORAGE_URL
+            - name: OBJECT_STORAGE_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: OBJECT_STORAGE_ACCESS_KEY
+            - name: OBJECT_STORAGE_SECRET_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: OBJECT_STORAGE_SECRET_KEY
+            - name: OBJECT_STORAGE_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: OBJECT_STORAGE_BUCKET
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
           readinessProbe:
