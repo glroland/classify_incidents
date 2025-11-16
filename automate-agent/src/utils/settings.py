@@ -1,0 +1,83 @@
+""" Configuration Management for application. """
+from dotenv import load_dotenv
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+# Load environment variables
+try:
+    load_dotenv()
+except Exception:   # pylint: disable=broad-except
+    # Ignore errors for when standard environment variables are being set
+    pass
+
+class Settings(BaseSettings):
+    """ Classify Incidents Configuration Settings """
+
+    # MCP Server Network Config
+    SERVER_ADDRESS: str = Field(
+        default="0.0.0.0",
+        json_schema_extra={
+            "env": "SERVER_ADDRESS",
+            "description": "Listen To Address for MCP Server",
+            "example": "0.0.0.0",
+        },
+    )
+    SERVER_PORT: int = Field(
+        default=8080,
+        json_schema_extra={
+            "env": "SERVER_PORT",
+            "description": "MCP Server Listen To Port",
+            "example": "8080",
+        },
+    )
+
+    # OpenAI API Endpoint
+    OPENAI_BASE_URL: str = Field(
+        default="http://localhost:11434/v1",
+        json_schema_extra={
+            "env": "OPENAI_BASE_URL",
+            "description": "OpenAI Base URL",
+            "example": "http://localhost:11434/v1",
+        },
+    )
+    OPENAI_API_KEY: str = Field(
+        default="not_provided",
+        json_schema_extra={
+            "env": "OPENAI_API_KEY",
+            "description": "OpenAI Base URL",
+        },
+    )
+
+    # Model Configuration
+    PLANNING_MODEL: str = Field(
+        default="openai/gpt-5",
+        json_schema_extra={
+            "env": "PLANNING_MODEL",
+            "description": "Planning Model",
+        },
+    )
+    JUDGE_PLAN_MODEL: str = Field(
+        default="claude/sonnet",
+        json_schema_extra={
+            "env": "JUDGE_PLAN_MODEL",
+            "description": "Model to Judge Plan",
+        },
+    )
+    CODING_MODEL: str = Field(
+        default="claude/sonnet",
+        json_schema_extra={
+            "env": "CODING_MODEL",
+            "description": "Coding Model",
+        },
+    )
+
+    # working directory for various tools, like ansible-lint
+    WORK_DIR: str = Field(
+        default="/tmp",
+        json_schema_extra={
+            "env": "WORK_DIR",
+            "description": "Working Directory for Temp Files",
+        },
+    )
+
+settings = Settings()

@@ -1,0 +1,30 @@
+serviceAccount:
+  create: true
+  annotations: {}
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+global:
+
+  image:
+    repository: registry.home.glroland.com/automate-it/
+    tag: 12    # working prior - 9
+    pullPolicy: IfNotPresent
+    usePullSecret: true
+
+  resources:
+    enabled: false
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+
+  useServiceAccount: false
+
+  securityContext: {}
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}

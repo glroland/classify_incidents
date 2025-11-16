@@ -1,0 +1,73 @@
+pipeline 
+{
+   agent any
+   
+   options 
+   {
+      disableConcurrentBuilds()
+      buildDiscarder(logRotator(numToKeepStr: '3'))
+   }
+
+   stages
+   {
+      stage('Prepare') 
+      {
+         steps 
+         {
+            sh '''
+                    echo "PATH = ${PATH}"
+                '''
+
+            git branch: 'main', 
+                credentialsId: 'github',
+                url: 'https://github.com/glroland/classify_incidents.git'
+         }
+      }
+
+      stage('Create Docker Image for automate-agent') 
+      {
+         steps 
+         {
+            sh 'docker build -f automate-agent/Dockerfile --tag automate-agent:$BUILD_NUMBER .'
+            sh 'cd automate-agent ; docker save automate-agent:$BUILD_NUMBER > automate-agent-dockerimage.tar'
+            step(followSymlinks: false, artifacts: 'automate-agent/automate-agent-dockerimage.tar', $class: 'ArtifactArchiver')
+            sh 'cd automate-agent ; docker rmi automate-agent:$BUILD_NUMBER'
+         }
+      }
+
+      stage('Create Docker Image for webapp') 
+      {
+         steps 
+         {
+            sh 'cd webapp ; docker build . --tag webapp:$BUILD_NUMBER'
+            sh 'cd webapp ; docker save webapp:$BUILD_NUMBER > webapp-dockerimage.tar'
+            step(followSymlinks: false, artifacts: 'webapp/webapp-dockerimage.tar', $class: 'ArtifactArchiver')
+            sh 'cd webapp ; docker rmi webapp:$BUILD_NUMBER'
+         }
+      }
+
+      stage('Reload then push images to quay') 
+      {
+         steps 
+         {
+            script 
+            {
+               docker.withRegistry('https://registry.home.glroland.com/', 'quay') 
+               {
+                  sh 'docker load -i automate-agent/automate-agent-dockerimage.tar'
+                  sh 'docker tag automate-agent:$BUILD_NUMBER registry.home.glroland.com/automate-it/automate-agent:$BUILD_NUMBER'
+                  sh 'docker rmi automate-agent:$BUILD_NUMBER'
+                  sh 'docker push registry.home.glroland.com/automate-it/automate-agent:$BUILD_NUMBER'
+                  sh 'docker rmi registry.home.glroland.com/automate-it/automate-agent:$BUILD_NUMBER'
+
+                  sh 'docker load -i webapp/webapp-dockerimage.tar'
+                  sh 'docker tag webapp:$BUILD_NUMBER registry.home.glroland.com/automate-it/webapp:$BUILD_NUMBER'
+                  sh 'docker rmi webapp:$BUILD_NUMBER'
+                  sh 'docker push registry.home.glroland.com/automate-it/webapp:$BUILD_NUMBER'
+                  sh 'docker rmi registry.home.glroland.com/automate-it/webapp:$BUILD_NUMBER'
+               }
+            }
+         }
+      }
+   }
+}
