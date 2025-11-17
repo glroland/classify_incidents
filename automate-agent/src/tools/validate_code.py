@@ -126,7 +126,7 @@ async def validate_code(language: str, source_code: str) -> str:
         return msg
 
     # save source to a temp file on disk
-    filename = uuid.uuid4()
+    filename = str(uuid.uuid4())
     temp_file_path = os.path.join(settings.WORK_DIR, filename)
     with open(temp_file_path, "w") as file:
         file.write(source_code)

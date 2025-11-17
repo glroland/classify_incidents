@@ -1,5 +1,6 @@
 """ Generate Code for a Generated Plan Tool """
 import logging
+from pydantic import BaseModel
 from utils.constants import SUPPORTED_LANGUAGES
 from utils.inference_gateway import InferenceGateway
 from utils.settings import settings
@@ -33,7 +34,7 @@ SYSTEM_PROMT_WRITE_SOURCE_CODE = """
     The automation must be developed in the following programming language:
 """
 
-class CreateCoderResponse:
+class CreateCoderResponse(BaseModel):
     language : str
     source_code : str
 
@@ -85,5 +86,5 @@ async def get_source_code(plan: str) -> CreateCoderResponse:
     response = CreateCoderResponse()
     response.language = language
     response.source_code = source_code
-    logger.info("create_code response:  Language=%s  SourceCode=%s", response.language, response.code)
+    logger.info("create_code response:  Language=%s  SourceCode=%s", response.language, response.source_code)
     return response
