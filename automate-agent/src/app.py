@@ -4,7 +4,9 @@ from fastmcp import FastMCP
 from tools.research_request import research_request
 from tools.create_plan import create_plan
 from tools.judge_plan import judge_plan
-from tools.get_source_code import get_source_code
+from tools.write_ansible_playbook import write_ansible_playbook
+from tools.write_bash_script import write_bash_script
+from tools.write_powershell_script import write_powershell_script
 from tools.validate_code import validate_code
 from utils.settings import settings
 
@@ -20,7 +22,9 @@ def main():
     mcp.tool(research_request)
     mcp.tool(create_plan)
     mcp.tool(judge_plan)
-    mcp.tool(get_source_code)
+    mcp.tool(write_ansible_playbook)
+    mcp.tool(write_bash_script)
+    mcp.tool(write_powershell_script)
     mcp.tool(validate_code)
 
     # Run the FastMCP app

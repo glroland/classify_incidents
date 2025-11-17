@@ -17,8 +17,8 @@ SYSTEM_PROMPT = """
     change.  The plan must outline actions that cooperate with your infrastructure ecosystem and standards, 
     as described in the provided 'research'.
 
-    The language to use for the automation should come from the user's request, but if not provided,
-    assume that an Ansible Playbook is to be developed.
+    Implementation Plans must specific a single programming language which should come from the user's 
+    request.  If a language was not provided, assume that an Ansible Playbook is to be developed.
 """
 
 async def create_plan(user_request: str, research: str) -> str:

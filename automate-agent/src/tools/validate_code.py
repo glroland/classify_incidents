@@ -15,6 +15,8 @@ def validate_ansible(source_file):
     
         Returns: validation results
     """
+    logger.info("Validating Ansible Playbook: Filename=%s", source_file)
+
     # run ansible lint
     command = ["ansible-lint", source_file]
     try:
@@ -38,6 +40,8 @@ def validate_bash(source_file):
     
         Returns: validation results
     """
+    logger.info("Validating Bash Schell Script: Filename=%s", source_file)
+
     # run shellcheck
     command = ["shellcheck", source_file]
     try:
@@ -67,6 +71,8 @@ def validate_powershell(source_file):
     
         Returns: validation results
     """
+    logger.info("Validating PowerShell Script: Filename=%s", source_file)
+
     # run shellcheck
     command = ["pwsh", "-Command", f"Invoke-ScriptAnalyzer -Path '{source_file}' | ConvertTo-Json"]
     try:
@@ -125,20 +131,31 @@ async def validate_code(language: str, source_code: str) -> str:
         logger.error(msg)
         return msg
 
-    # save source to a temp file on disk
+    # create filename (dependencies actually require this to be accurate)
     filename = str(uuid.uuid4())
+    if language == LANGUAGE_ANSIBLE:
+        filename += ".yaml"
+    elif language == LANGUAGE_BASH:
+        filename += ".sh"
+    elif language == LANGUAGE_POWERSHELL:
+        filename += ".ps1"
+    logger.debug("Temp Filename = %s", filename)
+
+    # save source to a temp file on disk
     temp_file_path = os.path.join(settings.WORK_DIR, filename)
+    logger.info("Writing source code to a temp file.  Name=%s", temp_file_path)
     with open(temp_file_path, "w") as file:
         file.write(source_code)
+    logger.info("Source code written to disk.  Moving to validation.")
 
-    # validate ansible
+    # validate source code
     result = None
     if language == LANGUAGE_ANSIBLE:
-        result = validate_ansible(source_code)
+        result = validate_ansible(temp_file_path)
     elif language == LANGUAGE_BASH:
-        result = validate_bash(source_code)
+        result = validate_bash(temp_file_path)
     elif language == LANGUAGE_POWERSHELL:
-        result = validate_powershell(source_code)
+        result = validate_powershell(temp_file_path)
 
     # delete the temp file
     os.remove(temp_file_path)
