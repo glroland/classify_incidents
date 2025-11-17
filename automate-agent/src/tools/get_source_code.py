@@ -34,11 +34,11 @@ SYSTEM_PROMT_WRITE_SOURCE_CODE = """
     The automation must be developed in the following programming language:
 """
 
-class CreateCoderResponse(BaseModel):
+class GetSourceCodeResponse(BaseModel):
     language : str
     source_code : str
 
-async def get_source_code(plan: str) -> CreateCoderResponse:
+async def get_source_code(plan: str) -> GetSourceCodeResponse:
     """ (Step 4 of 5)  Generates source code to automate the provided automation plan.
     
         plan - (required) implementation plan consisting of all information needed to generate the automation code
@@ -83,8 +83,6 @@ async def get_source_code(plan: str) -> CreateCoderResponse:
     logger.info("Source Code: %s", source_code)
 
     # build response
-    response = CreateCoderResponse()
-    response.language = language
-    response.source_code = source_code
-    logger.info("create_code response:  Language=%s  SourceCode=%s", response.language, response.source_code)
+    response = GetSourceCodeResponse(language = language, source_code = source_code)
+    logger.info("get_source_code response:  Language=%s  SourceCode=%s", response.language, response.source_code)
     return response
