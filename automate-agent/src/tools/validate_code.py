@@ -18,19 +18,25 @@ def validate_ansible(source_file):
     logger.info("Validating Ansible Playbook: Filename=%s", source_file)
 
     # run ansible lint
-    command = ["ansible-lint", source_file]
+    command = ["ansible-lint", "-f", "pep8", "--skip-list", "yaml[trailing-spaces],yaml[empty-lines]", "--nocolor", source_file]
+    validation_response = None
     try:
         logger.info("Running ansible-lint:  Command=%s", command)
         result = subprocess.run(command, capture_output=True, text=True, check=True)
-        logger.info("Ansible Lint completed successfully.  Result=%s", result.stdout)
-        return result.stdout
+        logger.info("Ansible Lint completed successfully.  Stdout=%s. Stderr=%s", result.stdout, result.stderr)
+        validation_response = result.stderr
     except subprocess.CalledProcessError as e:
-        logger.error("Ansible Lint failed with errors.  Result=%s", e.stderr)
-        return "ERROR: " + e.stderr
+        logger.warning("Ansible Lint failed with errors.  Stderr=%s  Stdout=%s", e.stderr, e.stdout)
+        validation_response = e.stdout
     except FileNotFoundError:
         msg = "ERROR: Ansible-lint command not found.  Ensure its installed and in PATH."
         logger.fatal(msg)
-        return msg
+        validation_response = msg
+
+    # cleanse response
+    validation_response = str(validation_response).replace(source_file + ":", "")
+    validation_response = validation_response.replace("/private", "")
+    return validation_response
 
 
 def validate_bash(source_file):
@@ -158,7 +164,7 @@ async def validate_code(language: str, source_code: str) -> str:
         result = validate_powershell(temp_file_path)
 
     # delete the temp file
-    os.remove(temp_file_path)
+    #os.remove(temp_file_path)
 
     # return result
     if result is None:
