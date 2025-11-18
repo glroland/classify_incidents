@@ -70,7 +70,7 @@ def validate_bash(source_file):
         return msg
 
 
-def validate_powershell(source_file):
+def validate_powershell_impl(source_file):
     """ Validates the provided Powershell Script.
     
         source_file - Powershell Script
@@ -108,6 +108,34 @@ def validate_powershell(source_file):
         msg = "ERROR: Powershell not found. Please install it and add to PATH."
         logger.error(msg)
         return msg
+
+
+def validate_powershell(source_file):
+    """ Wrapper for the validate_powershell_impl function that handles a failure
+        that occurs if the syntax checker module isn't installed.  Will retry 
+        the linting after installing the model in the event of that error being
+        raised.
+        
+        source_file - filename to validate
+    """
+    result = validate_powershell_impl(source_file)
+
+    if "Invoke-ScriptAnalyzer: The term 'Invoke-ScriptAnalyzer' is not recognized as a name of a cmdlet, function, script file, or executable program" in result:
+
+        # install module (weak error checking is intentional)
+        logger.info("Installing Script Analyzer module in PowerShell")
+        command = ["pwsh", "-Command", "Install-Module -Name PSScriptAnalyzer -Force"]
+        installation_result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            check=False
+        )
+        logger.info("Syntax Checker Installation Results: %s.  Retrying validation command", installation_result)
+
+        result = validate_powershell_impl(source_file)
+    
+    return result
 
 
 async def validate_code(language: str, source_code: str) -> str:
