@@ -2,6 +2,10 @@ OPENAI_BASE_URL = http://localhost:11434/v1
 OPENAI_API_KEY = not_provided
 OPENAI_MODEL = granite4
 
+PLANNING_MODEL = openai/gpt-5
+JUDGE_PLAN_MODEL = anthropic/claude-3-7-sonnet-20250219
+CODING_MODEL = anthropic/claude-3-7-sonnet-20250219
+
 SERVICE_NOW_INSTANCE = abc
 SERVICE_NOW_USERNAME = username
 SERVICE_NOW_PASSWORD = password
