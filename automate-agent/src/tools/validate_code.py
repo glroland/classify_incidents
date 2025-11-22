@@ -18,7 +18,7 @@ def validate_ansible(source_file):
     logger.info("Validating Ansible Playbook: Filename=%s", source_file)
 
     # run ansible lint
-    command = ["ansible-lint", "-f", "pep8", "--skip-list", "yaml[trailing-spaces],yaml[empty-lines]", "--nocolor", source_file]
+    command = ["ansible-lint", "-f", "pep8", "--skip-list", "yaml[trailing-spaces],yaml[empty-lines]", "--nocolor", "--project-dir", "/tmp", source_file]
     validation_response = None
     try:
         logger.info("Running ansible-lint:  Command=%s", command)
