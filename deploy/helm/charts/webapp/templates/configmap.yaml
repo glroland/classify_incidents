@@ -13,4 +13,4 @@ data:
   API_TIMEOUT: "60"
   PROMPTS_LOCATION: "./prompts/"
   OBJECT_STORAGE_URL: "https://eclipse.home.glroland.com:9000"
-  OBJECT_STORAGE_BUCKET: "lab"
+  OBJECT_STORAGE_BUCKET: "classify-incidents"
