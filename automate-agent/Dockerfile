@@ -11,10 +11,10 @@ ENV JUDGE_PLAN_MODEL = "canthropic/claude-3-7-sonnet-20250219"
 ENV CODING_MODEL = "anthropic/claude-3-7-sonnet-20250219"
 ENV WORK_DIR = "/tmp"
 
-# Install ShellCheck using microdnf
-RUN microdnf update && \
-    microdnf install -y shellcheck && \
-    microdnf clean all
+# Install ShellCheck
+RUN dnf update && \
+    dnf install -y shellcheck && \
+    dnf clean all
 
 # Install Powershell via RPM package from microsoft repo
 RUN curl -sSL -O https://packages.microsoft.com/config/rhel/9/packages-microsoft-prod.rpm && \
