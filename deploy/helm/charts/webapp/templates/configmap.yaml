@@ -8,7 +8,7 @@ immutable: false
 data:
   OPENAI_BASE_URL: "http://my-llama-stack.my-llama-stack.svc:8080/v1"
   OPENAI_API_KEY: "not_provided"
-  OPENAI_MODEL: "granite4"
+  OPENAI_MODEL: "together/openai/gpt-oss-120b"
   AUTOMATE_AGENT_URL: "http://{{ .Release.Name }}-automate-agent.automate-it.svc:8080/mcp"
   API_TIMEOUT: "60"
   PROMPTS_LOCATION: "./prompts/"
