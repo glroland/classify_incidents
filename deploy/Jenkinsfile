@@ -20,7 +20,7 @@ pipeline
 
             git branch: 'main', 
                 credentialsId: 'github',
-                url: 'https://github.com/glroland/classify_incidents.git'
+                url: 'https://github.com/glroland/automate-it.git'
          }
       }
 
@@ -28,7 +28,7 @@ pipeline
       {
          steps 
          {
-            sh 'docker build -f automate-agent/Dockerfile --tag automate-agent:$BUILD_NUMBER .'
+            sh 'cd automate-agent ; docker build -f Dockerfile --tag automate-agent:$BUILD_NUMBER .'
             sh 'cd automate-agent ; docker save automate-agent:$BUILD_NUMBER > automate-agent-dockerimage.tar'
             step(followSymlinks: false, artifacts: 'automate-agent/automate-agent-dockerimage.tar', $class: 'ArtifactArchiver')
             sh 'cd automate-agent ; docker rmi automate-agent:$BUILD_NUMBER'

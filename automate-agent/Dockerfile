@@ -11,17 +11,20 @@ ENV JUDGE_PLAN_MODEL = "canthropic/claude-3-7-sonnet-20250219"
 ENV CODING_MODEL = "anthropic/claude-3-7-sonnet-20250219"
 ENV WORK_DIR = "/tmp"
 
-# Install ShellCheck using microdnf
-RUN microdnf update && \
-    microdnf install -y shellcheck && \
-    microdnf clean all
+USER root
+
+# Install ShellCheck
+RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
+    dnf install -y shellcheck && \
+    dnf clean all
 
 # Install Powershell via RPM package from microsoft repo
 RUN curl -sSL -O https://packages.microsoft.com/config/rhel/9/packages-microsoft-prod.rpm && \
-    sudo rpm -i packages-microsoft-prod.rpm && \
+    rpm -i packages-microsoft-prod.rpm && \
     rm packages-microsoft-prod.rpm && \
-    sudo dnf update && \
-    sudo dnf install powershell -y
+    dnf install powershell -y
+
+USER 1001
 
 # By default, listen on port 8080
 EXPOSE 8080/tcp

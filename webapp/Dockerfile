@@ -31,4 +31,4 @@ RUN pip install -r requirements.txt
 COPY ./src/ .
 
 # Specify the command to run on container start
-CMD ["streamlit", "run", "./app.py", "--server.port=8080", "--server.address=0.0.0.0"]
+CMD ["streamlit", "run", "./web.py", "--server.port=8080", "--server.address=0.0.0.0"]

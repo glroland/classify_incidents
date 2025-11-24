@@ -64,19 +64,22 @@ spec:
                   key: AUTOMATE_AGENT_URL
             - name: SERVICE_NOW_INSTANCE
               valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
+                secretKeyRef:
+                  name: app-secrets
                   key: SERVICE_NOW_INSTANCE
+                  optional: true
             - name: SERVICE_NOW_USERNAME
               valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
+                secretKeyRef:
+                  name: app-secrets
                   key: SERVICE_NOW_USERNAME
+                  optional: true
             - name: SERVICE_NOW_PASSWORD
               valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
+                secretKeyRef:
+                  name: app-secrets
                   key: SERVICE_NOW_PASSWORD
+                  optional: true
             - name: API_TIMEOUT
               valueFrom:
                 configMapKeyRef:
@@ -94,14 +97,16 @@ spec:
                   key: OBJECT_STORAGE_URL
             - name: OBJECT_STORAGE_ACCESS_KEY
               valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
+                secretKeyRef:
+                  name: app-secrets
                   key: OBJECT_STORAGE_ACCESS_KEY
+                  optional: true
             - name: OBJECT_STORAGE_SECRET_KEY
               valueFrom:
-                configMapKeyRef:
-                  name: {{ include "automate-it.fullname" . }}
+                secretKeyRef:
+                  name: app-secrets
                   key: OBJECT_STORAGE_SECRET_KEY
+                  optional: true
             - name: OBJECT_STORAGE_BUCKET
               valueFrom:
                 configMapKeyRef:
@@ -140,6 +145,11 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
+      volumes:
+        - name: app-secrets
+          secret:
+            secretName: app-secrets
+            optional: true
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
