@@ -1,7 +1,6 @@
 """ Sidebar Web Component """
 import streamlit as st
 from commands.get_spaces import GetSpacesCommand
-from gateways.object_storage_gateway import ObjectStorageGateway
 from web_components.actions import actions
 
 def get_spaces():
@@ -50,3 +49,6 @@ def sidebar():
     # Create new data set button
     if st.button("Create New...", type="primary", width="stretch"):
         st.query_params.action = actions.CREATE_EVALUATION
+
+    if st.button("Automation Playground", type="primary", width="stretch"):
+        st.query_params.action = actions.PLAYGROUND

@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from commands.from_string import FromStringCommand
 from gateways.inference_gateway import InferenceGateway
 from utils.get_prompt import prompts
+from utils.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +151,8 @@ class FromFileCommand(BaseModel):
         retries = 0
         while retries < self.MAX_RETRIES:
             try:
-                categories_json_str = gateway.simple_chat(prompts.ROLLUP_SUBCATEGORIES,
+                categories_json_str = gateway.simple_chat(settings.OPENAI_MODEL,
+                                                          prompts.ROLLUP_SUBCATEGORIES,
                                                           subcategories_csv)
                 logger.debug("Categories from Subcategories Response == %s", categories_json_str)
                 category_mappings = json.loads(categories_json_str)

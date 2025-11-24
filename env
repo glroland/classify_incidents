@@ -6,6 +6,8 @@ PLANNING_MODEL = openai/gpt-5
 JUDGE_PLAN_MODEL = anthropic/claude-3-7-sonnet-20250219
 CODING_MODEL = anthropic/claude-3-7-sonnet-20250219
 
+AUTOMATE_AGENT_URL = https://automate-it-automate-agent-automate-it.apps.ocp.home.glroland.com/mcp
+
 SERVICE_NOW_INSTANCE = abc
 SERVICE_NOW_USERNAME = username
 SERVICE_NOW_PASSWORD = password

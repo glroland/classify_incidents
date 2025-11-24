@@ -11,6 +11,7 @@ from gateways.inference_gateway import InferenceGateway
 from gateways.object_storage_gateway import ObjectStorageGateway
 from utils.get_prompt import prompts
 from utils.space_metadata import load_metadata, save_metadata
+from utils.settings import settings
 from metadata.evaluation_space import EvaluationSpaceMetadata
 
 logger = logging.getLogger(__name__)
@@ -165,8 +166,9 @@ class FromSpaceCommand(BaseModel):
 
         # convert subcategories into parent categories
         retries = 0
-        categories_json_str = gateway.simple_chat(prompts.ROLLUP_SUBCATEGORIES,
-                                                    subcategories_csv)
+        categories_json_str = gateway.simple_chat(settings.OPENAI_MODEL, 
+                                                  prompts.ROLLUP_SUBCATEGORIES,
+                                                  subcategories_csv)
         logger.debug("Categories from Subcategories Response == %s", categories_json_str)
         try:
             category_mappings = json.loads(categories_json_str)
@@ -265,7 +267,8 @@ class FromSpaceCommand(BaseModel):
         self.summary_prompt = summary_prompt
 
         # ask LLM to summarize summary prompt
-        self.summary = gateway.simple_chat(prompts.SUMMARIZE_ANALYSIS,
+        self.summary = gateway.simple_chat(settings.OPENAI_MODEL, 
+                                           prompts.SUMMARIZE_ANALYSIS,
                                            summary_prompt)
 
     def update_space(self):

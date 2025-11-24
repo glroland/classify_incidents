@@ -6,6 +6,7 @@ from web_components.actions import actions
 from web_components.home import home
 from web_components.create_new_evaluation import create_new
 from web_components.evaluation_page import view_evaluation
+from web_components.automation_playground import playground
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -27,6 +28,8 @@ elif st.query_params["action"] == actions.CREATE_EVALUATION:
     create_new()
 elif st.query_params["action"] == actions.VIEW_EVALUATION:
     view_evaluation()
+elif st.query_params["action"] == actions.PLAYGROUND:
+    playground()
 else:
     # Error - unknown action
     msg = f"Unknown action passed into application!  Action={st.query_params["action"]}"

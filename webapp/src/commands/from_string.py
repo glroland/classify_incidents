@@ -5,6 +5,7 @@ from datetime import datetime
 from pydantic import BaseModel
 from gateways.inference_gateway import InferenceGateway
 from utils.get_prompt import prompts
+from utils.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +45,7 @@ class FromStringCommand(BaseModel):
         gateway = InferenceGateway()
 
         # step 1 - Summarize input
-        step_1_response = gateway.simple_chat(prompts.STEP_1_SUMMARIZE, self.input_str)
+        step_1_response = gateway.simple_chat(settings.OPENAI_MODEL, prompts.STEP_1_SUMMARIZE, self.input_str)
         logger.info("Step #1 Response == %s", step_1_response)
         self.summary = step_1_response
 
@@ -52,7 +53,7 @@ class FromStringCommand(BaseModel):
         retries = 0
         while retries < self.MAX_RETRIES:
             try:
-                step_2_response = gateway.simple_chat(prompts.STEP_2_ANALYZE, step_1_response)
+                step_2_response = gateway.simple_chat(settings.OPENAI_MODEL, prompts.STEP_2_ANALYZE, step_1_response)
                 logger.info("Step #2 Response == %s", step_2_response)
                 analysis = json.loads(step_2_response)
                 self.asset_name = analysis["asset_name"]

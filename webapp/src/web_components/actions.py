@@ -7,6 +7,7 @@ class WebsiteActions():
     HOME = "home"
     CREATE_EVALUATION = "create"
     VIEW_EVALUATION = "view"
+    PLAYGROUND = "playground"
 
     class ViewPageSubactions():
         """ List of view page actions """
