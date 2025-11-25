@@ -192,7 +192,7 @@ async def validate_code(language: str, source_code: str) -> str:
         result = validate_powershell(temp_file_path)
 
     # delete the temp file
-    #os.remove(temp_file_path)
+    os.remove(temp_file_path)
 
     # return result
     if result is None:

@@ -49,6 +49,15 @@ class Settings(BaseSettings):
         },
     )
 
+    # Knowledge Config
+    KNOWLEDGE_ENVIRONMENT_URL: str = Field(
+        default="https://raw.githubusercontent.com/glroland/automate-it/refs/heads/main/knowledge/environment.md",
+        json_schema_extra={
+            "env": "KNOWLEDGE_ENVIRONMENT_URL",
+            "description": "Environmental Metadata URL",
+        },
+    )
+
     # OpenAI API Endpoint
     OPENAI_BASE_URL: str = Field(
         default="http://localhost:11434/v1",

@@ -12,3 +12,4 @@ data:
   JUDGE_PLAN_MODEL: "anthropic/claude-3-7-sonnet-20250219"
   CODING_MODEL: "anthropic/claude-3-7-sonnet-20250219"
   WORK_DIR: "/tmp"
+  KNOWLEDGE_ENVIRONMENT_URL: "https://raw.githubusercontent.com/glroland/automate-it/refs/heads/main/knowledge/environment.md"

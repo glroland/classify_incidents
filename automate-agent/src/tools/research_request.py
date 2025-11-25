@@ -1,5 +1,7 @@
 """ Generate Code for a Generated Plan Tool """
 import logging
+import requests
+from utils.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -20,5 +22,13 @@ async def research_request(user_request: str) -> str:
         logger.error(msg)
         return msg
 
+    # download environmental knowledge
+    logger.info("Downloading Knowledge from: %s", settings.KNOWLEDGE_ENVIRONMENT_URL)
+    response = requests.get(settings.KNOWLEDGE_ENVIRONMENT_URL)
+    if response.status_code != 200:
+        logger.error("Unable to download Environmental Knowledge: Error Code=%s", response.status_code)
+        return "WARNING: No environmental context is available!  This will negatively impact the quality of any responses provided."
+    environmental_knowledge = response.content
 
-    return "All servers are RHEL"
+    logger.info("Environmental Knowledge:  %s", environmental_knowledge)
+    return environmental_knowledge

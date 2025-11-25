@@ -11,6 +11,7 @@ ENV PLANNING_MODEL = "openai/gpt-5"
 ENV JUDGE_PLAN_MODEL = "canthropic/claude-3-7-sonnet-20250219"
 ENV CODING_MODEL = "anthropic/claude-3-7-sonnet-20250219"
 ENV WORK_DIR = "/tmp"
+ENV KNOWLEDGE_ENVIRONMENT_URL = ""
 
 USER root
 
