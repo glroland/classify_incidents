@@ -19,6 +19,9 @@ SYSTEM_PROMPT = """
 
     Implementation Plans must specific a single programming language which should come from the user's 
     request.  If a language was not provided, assume that an Ansible Playbook is to be developed.
+
+    Implementation Plan complexity and detail should be commensurate with the user's request.  Avoid 
+    excessive planning for simple requests.
 """
 
 async def create_plan(user_request: str, research: str) -> str:
