@@ -3,7 +3,8 @@ FROM registry.access.redhat.com/ubi9/python-312:9.6-1758514557
 # Configuration
 ENV SERVER_ADDRESS = "0.0.0.0"
 ENV SERVER_PORT = "8080"
-ENV MCP_PROTOCOL = "http"
+ENV NUM_WORKERS = "0"
+ENV LOG_LEVEL = "info"
 ENV OPENAI_BASE_URL = "http://localhost:11434/v1"
 ENV OPENAI_API_KEY = "not_provided"
 ENV PLANNING_MODEL = "openai/gpt-5"

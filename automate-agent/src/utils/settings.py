@@ -30,12 +30,22 @@ class Settings(BaseSettings):
             "example": "8080",
         },
     )
-    MCP_PROTOCOL: str = Field(
-        default="http",
+    NUM_WORKERS: int = Field(
+        default=0,
         json_schema_extra={
-            "env": "MCP_PROTOCOL",
-            "description": "MCP Protocol to use",
-            "example": "sse,http",
+            "env": "NUM_WORKERS",
+            "description": "Number of Workers",
+            "example": "0 for ignore,10",
+        },
+    )
+
+    # Logging Config
+    LOG_LEVEL: str = Field(
+        default="info",
+        json_schema_extra={
+            "env": "LOG_LEVEL",
+            "description": "Logging Level for Server",
+            "example": "info,debug",
         },
     )
 

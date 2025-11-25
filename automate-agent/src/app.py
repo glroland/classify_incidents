@@ -1,6 +1,8 @@
 """ Automation Agent MCP Server """
 import logging
+import uvicorn
 from fastmcp import FastMCP
+from starlette.responses import JSONResponse
 from tools.research_request import research_request
 from tools.create_plan import create_plan
 from tools.judge_plan import judge_plan
@@ -14,7 +16,15 @@ from utils.settings import settings
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-mcp = FastMCP()
+# Create ASGI application
+mcp = FastMCP("Automate IT Agent", stateless_http=True)
+app = mcp.http_app()
+
+@app.route("/health")
+async def health_check(request):
+    """ Health check endpoint for the MCP Server. """
+    # check database connection
+    return JSONResponse({"status": "ok"})
 
 def main():
     """ Entrypoint for the MCP Server application. """
@@ -28,7 +38,17 @@ def main():
     mcp.tool(validate_code)
 
     # Run the FastMCP app
-    mcp.run(transport=settings.MCP_PROTOCOL, host=settings.SERVER_ADDRESS, port=settings.SERVER_PORT)
+    if settings.NUM_WORKERS <= 0:
+        uvicorn.run(app,
+                    host=settings.SERVER_ADDRESS,
+                    port=settings.SERVER_PORT,
+                    log_config=None)
+    else:
+        uvicorn.run("app:app",
+                    host=settings.SERVER_ADDRESS,
+                    port=settings.SERVER_PORT,
+                    workers=settings.NUM_WORKERS,
+                    log_config=None)
 
 if __name__ == "__main__":
     main()
