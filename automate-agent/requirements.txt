@@ -4,3 +4,5 @@ pydantic
 fastmcp
 openai
 ansible-lint
+fastapi
+

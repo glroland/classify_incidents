@@ -1,6 +1,7 @@
 """ Automation Agent MCP Server """
 import logging
 import uvicorn
+from fastapi import FastAPI
 from fastmcp import FastMCP
 from starlette.responses import JSONResponse
 from tools.research_request import research_request
@@ -16,15 +17,47 @@ from utils.settings import settings
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Create ASGI application
+# Create ASGI-based FastMCP application
 mcp = FastMCP("Automate IT Agent", stateless_http=True)
-app = mcp.http_app()
+mcp_asgi_app = mcp.http_app()
 
-@app.route("/health")
+# Create FastAPI application
+app = FastAPI()
+app.mount("/mcp", mcp_asgi_app)
+
+@app.get("/health")
 async def health_check(request):
     """ Health check endpoint for the MCP Server. """
     # check database connection
     return JSONResponse({"status": "ok"})
+
+@app.get("/api/research_request")
+async def api_research_request(user_request: str) -> str:
+    return await research_request(user_request)
+
+@app.get("/api/create_plan")
+async def api_create_plan(user_request: str, research: str) -> str:
+    return await create_plan(user_request, research)
+
+@app.get("/api/judge_plan")
+async def api_judge_plan(user_request: str, research: str, nominated_plan: str) -> str:
+    return await judge_plan(user_request, research, nominated_plan)
+
+@app.get("/api/write_ansible_playbook")
+async def api_write_ansible_playbook(plan: str) -> str:
+    return await write_ansible_playbook(plan)
+
+@app.get("/api/write_bash_script")
+async def api_write_bash_script(plan: str) -> str:
+    return await write_bash_script(plan)
+
+@app.get("/api/write_powershell_script")
+async def api_write_powershell_script(plan: str) -> str:
+    return await write_powershell_script(plan)
+
+@app.get("/api/validate_code")
+async def api_validate_code(language: str, source_code: str) -> str:
+    return await validate_code(language, source_code)
 
 def main():
     """ Entrypoint for the MCP Server application. """
