@@ -3,6 +3,7 @@ kind: Route
 metadata:
   annotations:
     app.openshift.io/connects-to: '[{"apiVersion":"apps/v1","kind":"Deployment","name":"app"}]'
+    haproxy.router.openshift.io/timeout: 300s
   labels:
     app: agent-automate-it
     app.kubernetes.io/component: agent-automate-it
