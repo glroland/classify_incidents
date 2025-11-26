@@ -2,6 +2,7 @@
 import logging
 import uvicorn
 from fastapi import FastAPI
+from fastapi.responses import PlainTextResponse
 from fastmcp import FastMCP
 from starlette.responses import JSONResponse
 from tools.research_request import research_request
@@ -31,31 +32,31 @@ async def health_check(request):
     # check database connection
     return JSONResponse({"status": "ok"})
 
-@app.get("/api/research_request")
+@app.get("/api/research_request", response_class=PlainTextResponse)
 async def api_research_request(user_request: str) -> str:
     return await research_request(user_request)
 
-@app.get("/api/create_plan")
+@app.get("/api/create_plan", response_class=PlainTextResponse)
 async def api_create_plan(user_request: str, research: str) -> str:
     return await create_plan(user_request, research)
 
-@app.get("/api/judge_plan")
+@app.get("/api/judge_plan", response_class=PlainTextResponse)
 async def api_judge_plan(user_request: str, research: str, nominated_plan: str) -> str:
     return await judge_plan(user_request, research, nominated_plan)
 
-@app.get("/api/write_ansible_playbook")
+@app.get("/api/write_ansible_playbook", response_class=PlainTextResponse)
 async def api_write_ansible_playbook(plan: str) -> str:
     return await write_ansible_playbook(plan)
 
-@app.get("/api/write_bash_script")
+@app.get("/api/write_bash_script", response_class=PlainTextResponse)
 async def api_write_bash_script(plan: str) -> str:
     return await write_bash_script(plan)
 
-@app.get("/api/write_powershell_script")
+@app.get("/api/write_powershell_script", response_class=PlainTextResponse)
 async def api_write_powershell_script(plan: str) -> str:
     return await write_powershell_script(plan)
 
-@app.get("/api/validate_code")
+@app.get("/api/validate_code", response_class=PlainTextResponse)
 async def api_validate_code(language: str, source_code: str) -> str:
     return await validate_code(language, source_code)
 
