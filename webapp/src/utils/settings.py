@@ -37,12 +37,19 @@ class Settings(BaseSettings):
         },
     )
 
-    # MCP Servers
-    AUTOMATE_AGENT_URL: str = Field(
+    # Agent Connection Info
+    AUTOMATE_AGENT_MCP_URL: str = Field(
         default="",
         json_schema_extra={
-            "env": "AUTOMATE_AGENT_URL",
-            "description": "Automation Agent URL",
+            "env": "AUTOMATE_AGENT_MCP_URL",
+            "description": "Automation Agent MCP Server URL",
+        },
+    )
+    AUTOMATE_AGENT_API_URL: str = Field(
+        default="",
+        json_schema_extra={
+            "env": "AUTOMATE_AGENT_API_URL",
+            "description": "Automation Agent API URL",
         },
     )
 
