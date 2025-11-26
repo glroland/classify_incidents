@@ -8,7 +8,7 @@ immutable: false
 data:
   OPENAI_BASE_URL: "http://my-llama-stack.my-llama-stack.svc:8080/v1"
   OPENAI_API_KEY: "not_provided"
-  PLANNING_MODEL: "oopenai/gpt-5"
+  PLANNING_MODEL: "openai/gpt-5"
   JUDGE_PLAN_MODEL: "anthropic/claude-3-7-sonnet-20250219"
   CODING_MODEL: "anthropic/claude-3-7-sonnet-20250219"
   WORK_DIR: "/tmp"
