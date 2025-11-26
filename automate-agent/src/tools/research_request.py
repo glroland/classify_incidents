@@ -28,7 +28,7 @@ async def research_request(user_request: str) -> str:
     if response.status_code != 200:
         logger.error("Unable to download Environmental Knowledge: Error Code=%s", response.status_code)
         return "WARNING: No environmental context is available!  This will negatively impact the quality of any responses provided."
-    environmental_knowledge = response.content
+    environmental_knowledge = response.text
 
     logger.info("Environmental Knowledge:  %s", environmental_knowledge)
     return environmental_knowledge
