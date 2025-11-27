@@ -1,0 +1,1 @@
+{"mcpServers":{"Automate-IT-Agent":{"type":"streamable-http","url":"http://localhost:8080/mcp","disabled":false,"alwaysAllow":["research_request","create_plan","judge_plan","write_bash_script","validate_code"]}}}
