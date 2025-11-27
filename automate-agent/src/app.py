@@ -20,10 +20,10 @@ logger = logging.getLogger(__name__)
 
 # Create ASGI-based FastMCP application
 mcp = FastMCP("Automate IT Agent", stateless_http=True)
-mcp_asgi_app = mcp.http_app()
+mcp_asgi_app = mcp.http_app(path="/")
 
 # Create FastAPI application
-app = FastAPI()
+app = FastAPI(lifespan=mcp_asgi_app.lifespan)
 app.mount("/mcp", mcp_asgi_app)
 
 @app.get("/health")
@@ -62,6 +62,7 @@ async def api_validate_code(language: str, source_code: str) -> str:
 
 def main():
     """ Entrypoint for the MCP Server application. """
+
     # add the tools
     mcp.tool(research_request)
     mcp.tool(create_plan)
