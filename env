@@ -9,6 +9,8 @@ CODING_MODEL = anthropic/claude-3-7-sonnet-20250219
 AUTOMATE_AGENT_MCP_URL = https://automate-it-automate-agent-automate-it.apps.ocp.home.glroland.com/mcp
 AUTOMATE_AGENT_API_URL = https://automate-it-automate-agent-automate-it.apps.ocp.home.glroland.com/api
 
+#KNOWLEDGE_ENVIRONMENT_URL = file:///Users/lroland/Projects/github.com/automate-it/knowledge/environment.md
+
 SERVICE_NOW_INSTANCE = abc
 SERVICE_NOW_USERNAME = username
 SERVICE_NOW_PASSWORD = password
