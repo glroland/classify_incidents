@@ -8,7 +8,7 @@ global:
 
   image:
     repository: registry.home.glroland.com/automate-it/
-    tag: 9    # working prior - 5
+    tag: 10    # working prior - 5
     pullPolicy: IfNotPresent
     usePullSecret: true
 
