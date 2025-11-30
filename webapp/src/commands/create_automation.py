@@ -5,7 +5,7 @@ from metadata.evaluation_space import EvaluationSpaceMetadata
 
 logger = logging.getLogger(__name__)
 
-class CreatePlaybookCommand(BaseModel):
+class CreateAutomationCommand(BaseModel):
     """ Command processor for the Create Automation Playbook action."""
 
     # input parameters
