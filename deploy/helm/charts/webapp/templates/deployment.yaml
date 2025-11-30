@@ -57,11 +57,16 @@ spec:
                 configMapKeyRef:
                   name: {{ include "automate-it.fullname" . }}
                   key: OPENAI_MODEL
-            - name: AUTOMATE_AGENT_URL
+            - name: AUTOMATE_AGENT_MCP_URL
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "automate-it.fullname" . }}
-                  key: AUTOMATE_AGENT_URL
+                  key: AUTOMATE_AGENT_MCP_URL
+            - name: AUTOMATE_AGENT_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "automate-it.fullname" . }}
+                  key: AUTOMATE_AGENT_API_URL
             - name: SERVICE_NOW_INSTANCE
               valueFrom:
                 secretKeyRef:
