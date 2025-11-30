@@ -1,12 +1,12 @@
-""" Command for create automation playbook for a given incident. """
+""" Command for create automation for a given incident. """
 import logging
 from pydantic import BaseModel
 from metadata.evaluation_space import EvaluationSpaceMetadata
 
 logger = logging.getLogger(__name__)
 
-class CreateAutomationCommand(BaseModel):
-    """ Command processor for the Create Automation Playbook action."""
+class CreateAutomationFromIncidentCommand(BaseModel):
+    """ Command processor for the Create Automation from Incident action."""
 
     # input parameters
     space_metadata : EvaluationSpaceMetadata = None
