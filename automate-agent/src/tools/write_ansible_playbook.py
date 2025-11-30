@@ -24,7 +24,7 @@ SYSTEM_PROMPT = """
 """
 
 async def write_ansible_playbook(plan: str) -> str:
-    """ (Step 4 of 5)  Generates an Ansible playbook for the automation plan.
+    """ (Step 5a of 6)  Generates an Ansible playbook for the automation plan.
 
         The implementation plan should drive what language is used to write the automation and this tool is used
         when the appropriate output is Ansible.  Implementation Plans should not involve multiple languages.

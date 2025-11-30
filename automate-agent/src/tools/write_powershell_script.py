@@ -27,7 +27,7 @@ SYSTEM_PROMPT = """
 """
 
 async def write_powershell_script(plan: str) -> str:
-    """ (Step 4 of 5)  Generates a PowerShell Script for the automation plan.
+    """ (Step 5c of 6)  Generates a PowerShell Script for the automation plan.
 
         The implementation plan should drive what language is used to write the automation and this tool is used
         when the appropriate output is a PowerShell Script.  Implementation Plans should not involve multiple 

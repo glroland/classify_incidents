@@ -19,13 +19,13 @@ SYSTEM_PROMPT = """
 """
 
 async def revise_plan(feedback: str, plan: str) -> str:
-    """ (Step 2 of 5)  Create an implementation plan for the provided request from the user and 
-        research that has been assembled from the ecosystem.
+    """ (Step 4 of 6)  Revises a previously created implmentation plan to accomodate improvement suggestions
+        and errors.
     
-        user_request - (required) user's original request describing automation objective
-        research - (required) environmental research that is helpful in generating accurate automation
+        feedback - (required) list of issues to remediate and improvements to make
+        plan - (required) implementation plan to modify
 
-        Returns: Implementation Plan for the provided automation request
+        Returns: Revised implementation plan
     """
     logger.info("revise_plan parameters.  Feedback=%s.  Plan=%s", feedback, plan)
 

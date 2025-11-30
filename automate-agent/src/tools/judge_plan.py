@@ -55,7 +55,7 @@ class JudgePlanResponse(BaseModel):
     revise_plan_flag: bool
 
 async def judge_plan(user_request: str, research: str, nominated_plan: str) -> JudgePlanResponse:
-    """ (Step 3 of 5)  Review the provided implementation plan for an automation generation request for
+    """ (Step 3 of 6)  Review the provided implementation plan for an automation generation request for
         accuracy and quality.  The result will be suggestions and criticism, if any, that must be 
         incorporated into the implementation plan.  If the suggested plan is modified based on the
         feedback, it must be re-judged by reinvoking this tool.

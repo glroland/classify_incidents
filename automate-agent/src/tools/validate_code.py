@@ -139,7 +139,7 @@ def validate_powershell(source_file):
 
 
 async def validate_code(language: str, source_code: str) -> str:
-    """ (Step 5 of 5)  Validates the syntax and quality of the provided source code. 
+    """ (Step 6 of 6)  Validates the syntax and quality of the provided source code. 
     
         language - (required) programming language that the code is written in (ex. 'java', 'bash', 'ansible')
         source_code - (required) source code to be validated

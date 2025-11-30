@@ -6,7 +6,7 @@ from utils.settings import settings
 logger = logging.getLogger(__name__)
 
 async def research_request(user_request: str) -> str:
-    """ (Step 1 of 5)  Researches a user request in preparation for generating automation.  This includes
+    """ (Step 1 of 6)  Researches a user request in preparation for generating automation.  This includes
         finding and augumenting the request with related environmental information, such as system types,
         software versions, prior issues, security concerns, etc.
     

@@ -79,7 +79,7 @@ SYSTEM_PROMPT = """
 """
 
 async def create_plan(user_request: str, research: str) -> str:
-    """ (Step 2 of 5)  Create an implementation plan for the provided request from the user and 
+    """ (Step 2 of 6)  Create an implementation plan for the provided request from the user and 
         research that has been assembled from the ecosystem.
     
         user_request - (required) user's original request describing automation objective
