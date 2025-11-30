@@ -11,6 +11,8 @@ logger = logging.getLogger(__name__)
 class InferenceGateway():
     """ OpenAI Service Gateway """
 
+    MAX_RETRIES = 3
+
     # openai client
     openai_client : OpenAI = None
 
@@ -110,25 +112,36 @@ class InferenceGateway():
             logger.debug("Softening system_prompt")
             system_prompt = None
 
-        # Employ OpenAI Responses AI
-        response = self.openai_client.responses.create(
-            model=model,
-            instructions=system_prompt,
-            input=user_prompt,
-            tools=tools,
-            temperature=0.3,
-            max_output_tokens=2048,
-            top_p=1,
-            store=False,
-            parallel_tool_calls=True,
-            stream=False,
-        )
-        ai_response = response.output_text
-        logger.info("Original AI Response: %s", ai_response)
+        retry_count = 0
+        while retry_count < self.MAX_RETRIES:
+            # Employ OpenAI Responses AI
+            response = self.openai_client.responses.create(
+                model=model,
+                instructions=system_prompt,
+                input=user_prompt,
+                tools=tools,
+                temperature=0.3,
+                max_output_tokens=2048,
+                top_p=1,
+                store=False,
+                parallel_tool_calls=True,
+                stream=False,
+            )
+            ai_response = response.output_text
+            logger.info("Original AI Response: %s", ai_response)
 
-        # remove leading text, if existent
-        ai_response = ai_response.strip().removeprefix("final")
-        ai_response = ai_response.strip().removeprefix("json")
-        json_obj = json.loads(ai_response)
+            # remove leading text, if existent
+            ai_response = ai_response.strip().removeprefix("final")
+            ai_response = ai_response.strip().removeprefix("json")
+            print("JSON as Text Before Parsing:\n" + ai_response)
+            try:
+                return json.loads(ai_response)
+            except json.JSONDecodeError as e:
+                logger.error("AI returned invalid JSON.  Retrying...  Error=%s. Response=%s", e, ai_response)
+            
+            retry_count += 1
 
-        return json_obj
+        # raise error
+        msg = "AI was unable to create parsable JSON after several attempts.  Failing operation."
+        logger.error(msg)
+        raise ValueError(msg)
