@@ -22,6 +22,34 @@ SYSTEM_PROMPT = """
 
     Unless explicitly requested to do so in the user request, never install anything as part of the 
     automation.  Instead, check for the existance of dependencies and fail if missing.
+
+    Do not provide Pseudo‑code.  Another AI agent is responsible for coding based on the plan you provide.
+
+    Example:
+
+    INPUT - "Write a Bash script that prints the hostname for the RHEL server currently logged into to the console"
+
+    OUTPUT -
+    Objective: Display the hostname for the local RHEL server on which the script is executed.
+    Language: Bash
+    Prerequisites:
+        [1] /bin/hostname exists
+    Arguments:
+        None
+    Outputs:
+        Hostname printed to console
+    Error Codes:
+        0 - Success
+        1 - Hostname utility does not exist
+        2 - Hostname is empty
+    Algorithm:
+        display_hostname.sh
+            1. Confirm /bin/hostname exists
+            2. Run /bin/hostname and capture results
+            3. Validate results
+            4. Print results to console
+            5. Return 0
+    
 """
 
 async def create_plan(user_request: str, research: str) -> str:

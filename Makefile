@@ -13,4 +13,4 @@ run-web:
 	cd webapp/src && streamlit run web.py --server.port=8080 --server.address=0.0.0.0
 
 run-agent:
-	cd automate-agent/src && python app.py
+	cd automate-agent/src && SERVER_PORT=8081 python app.py
