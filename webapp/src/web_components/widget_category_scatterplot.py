@@ -21,7 +21,6 @@ def show_category_scatterplot_widget(df):
     else:
         # create summary dataframe
         df.info()
-        df['Count_by_Category'] = df.groupby('Category')['Category'].transform('count')
         df['Count_by_Subcategory'] = df.groupby('Subcategory')['Subcategory'].transform('count')
 
         # handle situations where nan is pervasive in the data to be plotted

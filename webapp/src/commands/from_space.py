@@ -165,17 +165,10 @@ class FromSpaceCommand(BaseModel):
         category_mappings = None
 
         # convert subcategories into parent categories
-        retries = 0
-        categories_json_str = gateway.simple_chat(settings.OPENAI_MODEL, 
-                                                  prompts.ROLLUP_SUBCATEGORIES,
-                                                  subcategories_csv)
-        logger.debug("Categories from Subcategories Response == %s", categories_json_str)
-        try:
-            category_mappings = json.loads(categories_json_str)
-        except json.decoder.JSONDecodeError as e:
-            msg = "Unable to decode JSON from LLM.  JSON String = {categories_json_str}"
-            logger.error(msg)
-            raise e
+        category_mappings = gateway.json_chat(settings.OPENAI_MODEL, 
+                                              prompts.ROLLUP_SUBCATEGORIES,
+                                              subcategories_csv)
+        logger.info("Categories from Subcategories Response == %s", category_mappings)
 
         if category_mappings is None:
             msg = "After several retries, the LLM was unable to produce a parsable list of JSON categories for processing.  Processing is failing..."   # pylint: disable=line-too-long
@@ -239,10 +232,18 @@ class FromSpaceCommand(BaseModel):
         # setup inference gateway
         gateway = InferenceGateway()
 
+        columns = df.columns.tolist()
+
         # build datasets for summary
-        group_by_asset = df.groupby('Asset').size().sort_values(ascending=False).head(10)
-        group_by_category = df.groupby('Category').size().sort_values(ascending=False)
-        group_by_status = df.groupby('Status').size().sort_values(ascending=False)
+        group_by_asset = None
+        if 'Asset' in columns:
+            group_by_asset = df.groupby('Asset').size().sort_values(ascending=False).head(10)
+        group_by_category = None
+        if 'Category' in columns:
+            group_by_category = df.groupby('Category').size().sort_values(ascending=False)
+        group_by_status = None
+        if 'Status' in columns:
+            group_by_status = df.groupby('Status').size().sort_values(ascending=False)
         is_manual_count = len(df[df['Is_Manual'] == True])
         is_outage_count = len(df[df['Is_Outage'] == True])
         date_reported_series = pd.to_datetime(df['Date_Reported'], format='%Y/%m/%d %H:%M:%S').dropna()
@@ -255,14 +256,17 @@ class FromSpaceCommand(BaseModel):
         summary_prompt += f"# of incidents that required human effort: {is_manual_count}\n"
         summary_prompt += f"# of incidents associated with a service interruption/outage: {is_outage_count}\n"
         summary_prompt += "\n"
-        summary_prompt += "Servers and other assets with the highest incident counts:\n"
-        summary_prompt += f"{group_by_asset.to_string(header=False, dtype=False)}\n"
-        summary_prompt += "\n"
-        summary_prompt += "Incident counts by category:\n"
-        summary_prompt += f"{group_by_category.to_string(header=False, dtype=False)}\n"
-        summary_prompt += "\n"
-        summary_prompt += "Incident counts by status:\n"
-        summary_prompt += f"{group_by_status.to_string(header=False, dtype=False)}\n"
+        if group_by_asset is not None:
+            summary_prompt += "Servers and other assets with the highest incident counts:\n"
+            summary_prompt += f"{group_by_asset.to_string(header=False, dtype=False)}\n"
+            summary_prompt += "\n"
+        if group_by_category is not None:
+            summary_prompt += "Incident counts by category:\n"
+            summary_prompt += f"{group_by_category.to_string(header=False, dtype=False)}\n"
+            summary_prompt += "\n"
+        if group_by_status is not None:
+            summary_prompt += "Incident counts by status:\n"
+            summary_prompt += f"{group_by_status.to_string(header=False, dtype=False)}\n"
 
         self.summary_prompt = summary_prompt
 

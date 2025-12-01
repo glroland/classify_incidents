@@ -131,8 +131,10 @@ class InferenceGateway():
             logger.info("Original AI Response: %s", ai_response)
 
             # remove leading text, if existent
+            ai_response = ai_response.strip().removeprefix("```")
             ai_response = ai_response.strip().removeprefix("final")
             ai_response = ai_response.strip().removeprefix("json")
+            ai_response = ai_response.strip().removesuffix("```")
             print("JSON as Text Before Parsing:\n" + ai_response)
             try:
                 return json.loads(ai_response)

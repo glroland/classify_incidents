@@ -13,10 +13,8 @@ class FromStringCommand(BaseModel):
     """ Command processor for the From String action."""
 
     # constants
-    DATETIME_FORMAT : str = "%Y/%m/%d %H:%M:%S"
 
     # configuration
-    MAX_RETRIES : int = 3
 
     # input parameters
     input_str : str = None
@@ -50,31 +48,52 @@ class FromStringCommand(BaseModel):
         self.summary = step_1_response
 
         # step 2 - Analyze summary
-        retries = 0
-        while retries < self.MAX_RETRIES:
-            try:
-                step_2_response = gateway.simple_chat(settings.OPENAI_MODEL, prompts.STEP_2_ANALYZE, step_1_response)
-                logger.info("Step #2 Response == %s", step_2_response)
-                analysis = json.loads(step_2_response)
-                self.asset_name = analysis["asset_name"]
-                self.category = analysis["category"]
-                self.is_manual = analysis["is_manual"]
-                self.is_outage = analysis["is_outage"]
-                self.status = analysis["status"]
+        step_2_response = gateway.json_chat(settings.OPENAI_MODEL, prompts.STEP_2_ANALYZE, step_1_response)
+        logger.info("Step #2 Response == %s", step_2_response)
+        analysis = step_2_response
+        self.asset_name = analysis["asset_name"]
+        self.category = analysis["category"]
+        self.is_manual = analysis["is_manual"]
+        self.is_outage = analysis["is_outage"]
+        self.status = analysis["status"]
 
-                if "date_reported" in analysis:
-                    date_reported_str = analysis["date_reported"]
-                    if date_reported_str is not None and len(date_reported_str) > 0:
-                        self.date_reported = datetime.strptime(date_reported_str, self.DATETIME_FORMAT)                
-                    logger.info("Date Reported.  Str=%s. Obj=%s", date_reported_str, self.date_reported)
+        if "date_reported" in analysis:
+            date_reported_str = analysis["date_reported"]
+            self.date_reported = self.str_to_datetime(date_reported_str)
+            logger.info("Date Reported.  Str=%s. Obj=%s", date_reported_str, self.date_reported)
 
-                if "date_resolved" in analysis:
-                    date_resolved_str = analysis["date_resolved"]
-                    if date_resolved_str is not None and len(date_resolved_str) > 0:
-                        self.date_resolved = datetime.strptime(date_resolved_str, self.DATETIME_FORMAT)  
-                    logger.info("Date Resolved.  Str=%s. Obj=%s", date_resolved_str, self.date_resolved)
+        if "date_resolved" in analysis:
+            date_resolved_str = analysis["date_resolved"]
+            self.date_resolved = self.str_to_datetime(date_resolved_str)
+            logger.info("Date Resolved.  Str=%s. Obj=%s", date_resolved_str, self.date_resolved)
 
-                break
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                logger.warning("Retrying after error raised while trying to analyze summary.  E=%s", e) # pylint: disable=line-too-long
-                retries += 1
+    def str_to_datetime(self, datetime_s: str) -> datetime:
+        """ Converts a date/time in string format to a storngly typed date time object.
+        
+            datetime_s - datetime as string
+            
+            Returns: datetime
+        """
+        # validate arguments
+        if datetime_s is None or len(datetime_s) == 0:
+            logger.warning("datetime_s is a required argument but is empty!  Returning datetime as None")
+            return None
+
+        # format #1
+        format : str = "%Y/%m/%d %H:%M:%S"
+        try:
+            return datetime.strptime(datetime_s, format)
+        except ValueError as e:
+            logger.debug("datetime_s did not match the expected format.  S=%. F=%", datetime_s, format)
+
+        # format #2
+        format : str = "%Y-%m-%d %H:%M:%S"
+        try:
+            return datetime.strptime(datetime_s, format)
+        except ValueError as e:
+            logger.debug("datetime_s did not match the expected format.  S=%. F=%", datetime_s, format)
+
+        # unable to format string
+        msg = f"Unable to convert string to datetime!  S={datetime_s}"
+        logger.error(msg)
+        raise ValueError(msg)
