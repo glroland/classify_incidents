@@ -1,15 +1,16 @@
-OPENAI_BASE_URL = http://localhost:11434/v1
-OPENAI_API_KEY = not_provided
-OPENAI_MODEL = granite4
+OPENAI_BASE_URL = https://my-llama-stack-my-llama-stack.apps.ocp.home.glroland.com/v1
 
-PLANNING_MODEL = openai/gpt-5
-JUDGE_PLAN_MODEL = anthropic/claude-3-7-sonnet-20250219
-CODING_MODEL = anthropic/claude-3-7-sonnet-20250219
+OPENAI_API_KEY = not_provided
+
+OPENAI_MODEL = together/openai/gpt-oss-120b
+PLANNING_MODEL = together/openai/gpt-oss-120b
+JUDGE_PLAN_MODEL = anthropic/claude-sonnet-4-5-20250929
+CODING_MODEL = anthropic/claude-sonnet-4-5-20250929
 
 AUTOMATE_AGENT_MCP_URL = https://automate-it-automate-agent-automate-it.apps.ocp.home.glroland.com/mcp
-AUTOMATE_AGENT_API_URL = https://automate-it-automate-agent-automate-it.apps.ocp.home.glroland.com/api
+AUTOMATE_AGENT_API_URL = http://localhost:8081/api
 
-#KNOWLEDGE_ENVIRONMENT_URL = file:///Users/lroland/Projects/github.com/automate-it/knowledge/environment.md
+KNOWLEDGE_ENVIRONMENT_URL = file:///Users/lroland/Projects/github.com/automate-it/knowledge/environment.md
 
 SERVICE_NOW_INSTANCE = abc
 SERVICE_NOW_USERNAME = username
