@@ -21,7 +21,7 @@ def show_category_scatterplot_widget(df):
     else:
         # create summary dataframe
         df.info()
-        df['Count_by_Subcategory'] = df.groupby('Subcategory')['Subcategory'].transform('count')
+        df['Count_by_Category'] = df.groupby('Category')['Category'].transform('count')
 
         # handle situations where nan is pervasive in the data to be plotted
         logger.info("BEFORE CLEANSE...  Shape=%s. Head=%s", df.shape, df.head())
@@ -31,6 +31,6 @@ def show_category_scatterplot_widget(df):
             logger.warning("DataFrame is empty after cleansing NaNs.  Skipping graph rendering...")
         else:
             # display new dataframe
-            fig = px.scatter(df, x="Asset", y="Subcategory",
-                            size="Count_by_Subcategory")
-            st.plotly_chart(fig, key="Subcategory", on_select="rerun")
+            fig = px.scatter(df, x="Asset", y="Category",
+                            size="Count_by_Category")
+            st.plotly_chart(fig, key="Category", on_select="rerun")
