@@ -2,8 +2,11 @@
 import logging
 from utils.inference_gateway import InferenceGateway
 from utils.settings import settings
+from utils.knowledge_gateway import get_knowledge_artifact
 
 logger = logging.getLogger(__name__)
+
+KNOWLEDGE_BASH_BEST_PRACTICES = "bash_best_practices.md"
 
 SYSTEM_PROMPT = """
     You are an IT operations programming analyst who is an expert writing shell scripts for Bash.  These
@@ -24,6 +27,8 @@ SYSTEM_PROMPT = """
 
     If additional information is needed in order to implement any steps, fail the development request and ask
     for help.  Never make assumptions.
+
+    All scripts produced must align with following standards and practices:
 """
 
 async def write_bash_script(plan: str) -> str:
@@ -45,10 +50,15 @@ async def write_bash_script(plan: str) -> str:
         logger.error(msg)
         return msg
 
+    # build system prompt
+    best_practices = get_knowledge_artifact(KNOWLEDGE_BASH_BEST_PRACTICES)
+    system_prompt = SYSTEM_PROMPT + best_practices
+    logger.debug("Final System Prompt: %s", system_prompt)
+
     gateway = InferenceGateway()
 
     # write the source code
-    source_code = gateway.simple_chat(SYSTEM_PROMPT, plan, settings.CODING_MODEL)
+    source_code = gateway.simple_chat(system_prompt, plan, settings.CODING_MODEL)
     if source_code is None or len(source_code) == 0:
         msg = f"ERROR: AI responded with an empty string for the Bash script.  Plan={plan}"
         logger.error(msg)
