@@ -1,6 +1,7 @@
 """ Service Gateway for the Inferencing API. """
 import logging
 import json
+import re
 import streamlit as st
 from openai import OpenAI
 from utils.settings import settings
@@ -131,6 +132,7 @@ class InferenceGateway():
             logger.info("Original AI Response: %s", ai_response)
 
             # remove leading text, if existent
+            ai_response = re.sub(r"^analysis.*final{", "{", ai_response.strip(), flags=re.IGNORECASE|re.DOTALL)
             ai_response = ai_response.strip().removeprefix("```")
             ai_response = ai_response.strip().removeprefix("final")
             ai_response = ai_response.strip().removeprefix("json")
