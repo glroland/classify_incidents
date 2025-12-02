@@ -22,12 +22,13 @@ class InferenceGateway():
         self.openai_client = OpenAI(base_url=settings.OPENAI_BASE_URL,
                                     api_key=settings.OPENAI_API_KEY)
 
-    def simple_chat(self, model, system_prompt, user_prompt):
+    def simple_chat(self, model, system_prompt, user_prompt, mcp_list: list[dict] = []):
         """ Executes a simple chat based on the provided prompts.
 
             model - model to use
             system_prompt - system prompt
             user_prompt - user prompt
+            mcp_list - list of tools
         """
         # validate required fields
         if user_prompt is None or len(user_prompt) == 0:
@@ -40,21 +41,25 @@ class InferenceGateway():
             logger.debug("Softening system_prompt")
             system_prompt = None
 
-        # create message array
-        messages = []
-        if system_prompt is not None:
-            messages.append({"role": "system", "content": system_prompt})
-        messages.append({"role": "user", "content": user_prompt})
-
-        # invoke the chat completions endpoint
-        chat_completion = self.openai_client.chat.completions.create(
+        # Employ OpenAI Responses AI
+        response = self.openai_client.responses.create(
             model=model,
-            messages=messages
+            instructions=system_prompt,
+            input=user_prompt,
+            tools=mcp_list,
+            temperature=0.3,
+            max_output_tokens=2048,
+            top_p=1,
+            store=True,
+            previous_response_id=None,
+            parallel_tool_calls=True,
+            stream=False,
         )
-        response = chat_completion.choices[0].message.content
+        response = response.output_text
         logger.debug("AI Response: %s", response)
 
         return response
+
 
     def streaming_chat(self, model: str, system_prompt: str, user_input: str, mcp_list: list[dict], placeholder, previous_response_id=None) -> str:
         """ Process a chat request.
