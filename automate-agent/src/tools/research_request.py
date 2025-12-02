@@ -1,9 +1,10 @@
 """ Generate Code for a Generated Plan Tool """
 import logging
-import urllib.request
-from utils.settings import settings
+from utils.knowledge_gateway import get_knowledge_artifact
 
 logger = logging.getLogger(__name__)
+
+KNOWLEDGE_OVERALL = "overall_environment.md"
 
 async def research_request(user_request: str) -> str:
     """ (Step 1 of 6)  Researches a user request in preparation for generating automation.  This includes
@@ -23,15 +24,4 @@ async def research_request(user_request: str) -> str:
         return msg
 
     # download environmental knowledge
-    logger.info("Downloading Knowledge from: %s", settings.KNOWLEDGE_ENVIRONMENT_URL)
-    environmental_knowledge = ""
-    try:
-        with urllib.request.urlopen(settings.KNOWLEDGE_ENVIRONMENT_URL) as response:
-            file_content = response.read()
-            environmental_knowledge = file_content.decode('utf-8')
-    except urllib.error.URLError as e:
-        logger.error("Unable to download Environmental Knowledge due to error!  %s", e)
-        return "WARNING: No environmental context is available!  This will negatively impact the quality of any responses provided."
-
-    logger.info("Environmental Knowledge:  %s", environmental_knowledge)
-    return environmental_knowledge
+    return get_knowledge_artifact(KNOWLEDGE_OVERALL)

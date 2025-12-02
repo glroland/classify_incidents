@@ -51,7 +51,7 @@ class Settings(BaseSettings):
 
     # Knowledge Config
     KNOWLEDGE_ENVIRONMENT_URL: str = Field(
-        default="https://raw.githubusercontent.com/glroland/automate-it/refs/heads/main/knowledge/environment.md",
+        default="https://raw.githubusercontent.com/glroland/automate-it/refs/heads/main/knowledge/",
         json_schema_extra={
             "env": "KNOWLEDGE_ENVIRONMENT_URL",
             "description": "Environmental Metadata URL",
