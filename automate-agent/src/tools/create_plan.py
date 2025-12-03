@@ -107,7 +107,7 @@ async def create_plan(user_request: str, research: str) -> str:
 
     # execute inference
     gateway = InferenceGateway()
-    plan = gateway.simple_chat(SYSTEM_PROMPT, prompt, settings.PLANNING_MODEL)
+    plan = await gateway.simple_chat(SYSTEM_PROMPT, prompt, settings.PLANNING_MODEL)
 
     logger.info("Suggested Plan: %s", plan)
     return plan

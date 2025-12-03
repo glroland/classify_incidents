@@ -48,7 +48,7 @@ async def revise_plan(feedback: str, plan: str) -> str:
 
     # execute inference
     gateway = InferenceGateway()
-    plan = gateway.simple_chat(SYSTEM_PROMPT, prompt, settings.PLANNING_MODEL)
+    plan = await gateway.simple_chat(SYSTEM_PROMPT, prompt, settings.PLANNING_MODEL)
 
     logger.info("Updated Plan: %s", plan)
     return plan

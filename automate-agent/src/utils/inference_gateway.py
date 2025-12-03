@@ -1,7 +1,7 @@
 """ Service Gateway for the Inferencing API. """
 import logging
 import json
-from openai import OpenAI
+from openai import AsyncOpenAI
 from utils.settings import settings
 
 logger = logging.getLogger(__name__)
@@ -11,14 +11,14 @@ class InferenceGateway():
     """ OpenAI Service Gateway """
 
     # openai client
-    openai_client : OpenAI = None
+    openai_client : AsyncOpenAI = None
 
     def __init__(self):
         """ Default Constructor """
-        self.openai_client = OpenAI(base_url=settings.OPENAI_BASE_URL,
-                                    api_key=settings.OPENAI_API_KEY)
+        self.openai_client = AsyncOpenAI(base_url=settings.OPENAI_BASE_URL,
+                                         api_key=settings.OPENAI_API_KEY)
 
-    def simple_chat(self, system_prompt, user_prompt, model):
+    async def simple_chat(self, system_prompt, user_prompt, model):
         """ Executes a simple chat based on the provided prompts.
 
             system_prompt - system prompt
@@ -46,7 +46,7 @@ class InferenceGateway():
         messages.append({"role": "user", "content": user_prompt})
 
         # invoke the chat completions endpoint
-        chat_completion = self.openai_client.chat.completions.create(
+        chat_completion = await self.openai_client.chat.completions.create(
             model=model,
             messages=messages
         )
@@ -56,7 +56,7 @@ class InferenceGateway():
         return response
 
 
-    def json_chat(self, system_prompt, user_prompt, model):
+    async def json_chat(self, system_prompt, user_prompt, model):
         """ Executes a simple chat based on the provided prompts that responds in JSON
 
             system_prompt - system prompt
@@ -75,7 +75,7 @@ class InferenceGateway():
             system_prompt = None
 
         # Employ OpenAI Responses AI
-        response = self.openai_client.responses.create(
+        response = await self.openai_client.responses.create(
             model=model,
             instructions=system_prompt,
             input=user_prompt,

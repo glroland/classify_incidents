@@ -1,1 +1,1 @@
-{"mcpServers":{"Automate-IT-Agent":{"type":"streamable-http","url":"http://localhost:8080/mcp","disabled":true,"alwaysAllow":["judge_plan","write_ansible_playbook","write_powershell_script","write_bash_script","validate_code","research_request","create_plan"]}}}
+{"mcpServers":{"Automate-IT-Agent":{"type":"streamable-http","url":"http://localhost:8081/mcp","disabled":true,"alwaysAllow":["judge_plan","write_ansible_playbook","write_powershell_script","write_bash_script","validate_code","research_request","create_plan"]}}}
