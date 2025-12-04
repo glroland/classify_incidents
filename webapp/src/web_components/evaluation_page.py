@@ -8,7 +8,7 @@ from web_components.evaluation_tab_analysis import view_evaluation_analysis
 from web_components.evaluation_tab_automation import view_evaluation_automation
 from web_components.evaluation_tab_import import view_evaluation_import
 from web_components.evaluation_tab_advanced import view_evaluation_advanced
-from web_components.evaluation_tab_heat_maps import view_evaluation_heat_map_by_server, view_evaluation_heat_map_by_issue
+from web_components.evaluation_tab_heat_maps import view_evaluation_heat_map
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +27,11 @@ def view_evaluation():
     st.write(metadata.description)
 
     # render page tabs
-    summary_tab, import_tab, analysis_tab, heat_map_server_tab, heat_map_issue_tab, automation_tab, advanced_tab = st.tabs( \
+    summary_tab, import_tab, analysis_tab, heat_maps_tab, automation_tab, advanced_tab = st.tabs( \
             ["Summary",
                 "Import Incidents",
                 "Incident-Level Analysis",
-                "Heat Map by Server",
-                "Heat Map by Issue",
+                "Heat Maps",
                 "Automation",
                 "Advanced"],
             width="stretch", default=None)
@@ -46,11 +45,8 @@ def view_evaluation():
     with analysis_tab:
         view_evaluation_analysis(space_id, command)
 
-    with heat_map_server_tab:
-        view_evaluation_heat_map_by_server(space_id, command)
-
-    with heat_map_issue_tab:
-        view_evaluation_heat_map_by_issue(space_id, command)
+    with heat_maps_tab:
+        view_evaluation_heat_map(space_id, command)
 
     with automation_tab:
         view_evaluation_automation(space_id, command)

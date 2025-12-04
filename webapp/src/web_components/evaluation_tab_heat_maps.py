@@ -107,21 +107,26 @@ def render_heat_map(title, pivot_entity_type, pivot_column, df):
     show_heatmap_grid_widget(f"{title}", year, month, header, rows)
 
 
-def view_evaluation_heat_map_by_issue(space_id, command):
+def view_evaluation_heat_map(space_id, command):
     # retrieve data set
     df = command.analysis_df
     if df is None or len(df) == 0:
         st.write("Please run the analysis tool first.")
         return
+    
+    # setup radio button labels
+    RADIO_LABEL_TOP_CIS = "Top Config Items"
+    RADIO_LABEL_BY_CATEGORY = "Issue Category"
+    RADIO_LABEL_BY_SUBCATEGORY = "Issue Subcategory"
+    heat_map_type = st.radio(
+            "View Incident Heat Map by:",
+            (RADIO_LABEL_TOP_CIS, RADIO_LABEL_BY_CATEGORY, RADIO_LABEL_BY_SUBCATEGORY),
+            horizontal=True
+    )
 
-    render_heat_map("Classified Incident Heat Map", "Issue Type", "Category", df)
-
-
-def view_evaluation_heat_map_by_server(space_id, command):
-    # retrieve data set
-    df = command.analysis_df
-    if df is None or len(df) == 0:
-        st.write("Please run the analysis tool first.")
-        return
-
-    render_heat_map(f"Top {MAX_ROWS} Incident Heat Map", "Config Item", "Asset", df)
+    if heat_map_type == RADIO_LABEL_BY_CATEGORY:
+        render_heat_map("Classified Incident Heat Map", "Issue Type", "Category", df)
+    elif heat_map_type == RADIO_LABEL_BY_SUBCATEGORY:
+        render_heat_map("Classified Incident Heat Map", "Issue Type", "Subcategory", df)
+    else:
+        render_heat_map(f"Top {MAX_ROWS} Incident Heat Map", "Config Item", "Asset", df)
