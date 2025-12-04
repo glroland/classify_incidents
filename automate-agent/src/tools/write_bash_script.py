@@ -58,7 +58,7 @@ async def write_bash_script(plan: str) -> str:
     gateway = InferenceGateway()
 
     # write the source code
-    source_code = gateway.simple_chat(system_prompt, plan, settings.CODING_MODEL)
+    source_code = await gateway.simple_chat(system_prompt, plan, settings.CODING_MODEL)
     if source_code is None or len(source_code) == 0:
         msg = f"ERROR: AI responded with an empty string for the Bash script.  Plan={plan}"
         logger.error(msg)

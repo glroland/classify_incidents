@@ -97,7 +97,7 @@ async def judge_plan(user_request: str, research: str, nominated_plan: str) -> J
     gateway = InferenceGateway()
     retry_count = 0
     while (retry_count < MAX_RETRIES):
-        critical_feedback = gateway.json_chat(SYSTEM_PROMPT, prompt, settings.JUDGE_PLAN_MODEL)
+        critical_feedback = await gateway.json_chat(SYSTEM_PROMPT, prompt, settings.JUDGE_PLAN_MODEL)
         logger.info("Critical Feedback (Unqualified): %s", critical_feedback)
     
         # parse response
