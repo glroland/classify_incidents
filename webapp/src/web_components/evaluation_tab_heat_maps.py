@@ -1,7 +1,9 @@
 import logging
 from calendar import monthrange
+from datetime import date
 import streamlit as st
 import pandas as pd
+from dateutil.relativedelta import relativedelta
 from web_components.widget_heatmap_grid import show_heatmap_grid_widget
 
 logger = logging.getLogger(__name__)
@@ -24,28 +26,14 @@ PIVOT_DATE_COLUMN = "Date_Reported"
 11  Count_by_Category  5 non-null      int64 
 """
 
-def render_heat_map(title, pivot_entity_type, pivot_column, df):
+def render_heat_map(title, pivot_entity_type, pivot_column, sample_date, df):
     # validate that key columns exist before trying to render
     if not PIVOT_DATE_COLUMN in df.columns:
         st.write("Unsupported Data Import version.  Skipping heatmap render.")
         return
 
-    # prepare dataframe for date analysis
-    prior_count = len(df)
-    df = df.dropna(subset=[PIVOT_DATE_COLUMN])
-    if len(df) != prior_count:
-        msg = f"WARNING: Dropped {prior_count - len(df)} rows from data set that had no value for '{PIVOT_DATE_COLUMN}' column."
-        logger.warning(msg)
-        st.markdown(f":red[**{msg}**]")
-    if len(df) == 0:
-        logger.warning("Data Set has no data to process in heat map view")
-        st.markdown("I'm sorry but this data set has no data to analyze.\n\nThis may be due to the analysis process not running first or an issue with the AI model analyzing the raw data.")
-        return
-
-    # setup date range
-    max_date = pd.to_datetime(df[PIVOT_DATE_COLUMN]).max()
-    month = max_date.month
-    year = max_date.year
+    month = sample_date.month
+    year = sample_date.year
     days_in_month = monthrange(year, month)[1]
 
     # prepare core dataframe (PivotColumn/Date/Count)
@@ -114,6 +102,22 @@ def view_evaluation_heat_map(space_id, command):
         st.write("Please run the analysis tool first.")
         return
     
+    # prepare dataframe for date analysis
+    prior_count = len(df)
+    df = df.dropna(subset=[PIVOT_DATE_COLUMN])
+    if len(df) != prior_count:
+        msg = f"WARNING: Dropped {prior_count - len(df)} rows from data set that had no value for '{PIVOT_DATE_COLUMN}' column."
+        logger.warning(msg)
+        st.markdown(f":red[**{msg}**]")
+    if len(df) == 0:
+        logger.warning("Data Set has no data to process in heat map view")
+        st.markdown("I'm sorry but this data set has no data to analyze.\n\nThis may be due to the analysis process not running first or an issue with the AI model analyzing the raw data.")
+        return
+
+    # setup date range
+    min_date = pd.to_datetime(df[PIVOT_DATE_COLUMN]).min()
+    max_date = pd.to_datetime(df[PIVOT_DATE_COLUMN]).max()
+
     # setup radio button labels
     RADIO_LABEL_TOP_CIS = "Top Config Items"
     RADIO_LABEL_BY_CATEGORY = "Issue Category"
@@ -124,9 +128,15 @@ def view_evaluation_heat_map(space_id, command):
             horizontal=True
     )
 
-    if heat_map_type == RADIO_LABEL_BY_CATEGORY:
-        render_heat_map("Classified Incident Heat Map", "Issue Type", "Category", df)
-    elif heat_map_type == RADIO_LABEL_BY_SUBCATEGORY:
-        render_heat_map("Classified Incident Heat Map", "Issue Type", "Subcategory", df)
-    else:
-        render_heat_map(f"Top {MAX_ROWS} Incident Heat Map", "Config Item", "Asset", df)
+    loop_date = date(min_date.year, min_date.month, 1)
+    while loop_date <= max_date.date():
+        # render heat map for month
+        if heat_map_type == RADIO_LABEL_BY_CATEGORY:
+            render_heat_map("Classified Incident Heat Map", "Issue Type", "Category", loop_date, df)
+        elif heat_map_type == RADIO_LABEL_BY_SUBCATEGORY:
+            render_heat_map("Classified Incident Heat Map", "Issue Type", "Subcategory", loop_date, df)
+        else:
+            render_heat_map(f"Top {MAX_ROWS} Incident Heat Map", "Config Item", "Asset", loop_date, df)
+
+        # add month to loop date
+        loop_date = loop_date + relativedelta(months=1)

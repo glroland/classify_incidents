@@ -47,13 +47,13 @@ def show_heatmap_grid_widget(title, year, month, header, rows,
             color: white;
         }
         .gridCellHigh {
-            background-color: red;
+            background-color: #FFCCCB;
         }
         .gridCellMedium {
             background-color: yellow;
         }
         .gridCellLow {
-            background-color: green;
+            background-color: lightgreen;
         }
     </style>
     <div id="grid" class="gridComponent">
@@ -118,4 +118,4 @@ def show_heatmap_grid_widget(title, year, month, header, rows,
     </div>
     """
     
-    components.html(html, height=600)
+    components.html(html)

@@ -11,3 +11,4 @@ streamlit
 watchdog
 boto3
 plotly
+python-dateutil
