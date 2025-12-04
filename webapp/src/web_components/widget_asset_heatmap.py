@@ -42,9 +42,6 @@ def show_asset_heatmap_widget(df):
 
     # setup date range
     max_date = pd.to_datetime(df[PIVOT_DATE_COLUMN]).max()
-    print ("HELO")
-    print (type(max_date))
-    print (max_date)
     month = max_date.month
     year = max_date.year
     days_in_month = monthrange(year, month)[1]
