@@ -37,6 +37,7 @@ def show_heatmap_grid_widget(title, year, month, header, rows,
         }
         .gridComponent td {
             width: 25px;
+            white-space: nowrap;
         }
         .gridStrong {
             font-weight: bold;
