@@ -5,7 +5,6 @@ from commands.load_space import LoadSpacesCommand
 from web_components.actions import actions
 from web_components.evaluation_tab_summary import view_evaluation_summary
 from web_components.evaluation_tab_analysis import view_evaluation_analysis
-from web_components.evaluation_tab_rawdata import view_evaluation_raw_data
 from web_components.evaluation_tab_automation import view_evaluation_automation
 from web_components.evaluation_tab_import import view_evaluation_import
 from web_components.evaluation_tab_advanced import view_evaluation_advanced
@@ -28,10 +27,9 @@ def view_evaluation():
     st.write(metadata.description)
 
     # render page tabs
-    summary_tab, import_tab, raw_data_tab, analysis_tab, heat_map_server_tab, heat_map_issue_tab, automation_tab, advanced_tab = st.tabs( \
+    summary_tab, import_tab, analysis_tab, heat_map_server_tab, heat_map_issue_tab, automation_tab, advanced_tab = st.tabs( \
             ["Summary",
                 "Import Incidents",
-                "Unmodified Incident Data",
                 "Incident-Level Analysis",
                 "Heat Map by Server",
                 "Heat Map by Issue",
@@ -44,9 +42,6 @@ def view_evaluation():
 
     with import_tab:
         view_evaluation_import(space_id, command)
-
-    with raw_data_tab:
-        view_evaluation_raw_data(space_id, command)
 
     with analysis_tab:
         view_evaluation_analysis(space_id, command)
